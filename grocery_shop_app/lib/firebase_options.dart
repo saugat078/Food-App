@@ -54,10 +54,10 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAFFj7EPqR4JfMr1_BP6DjNtAj_7xh8F1M',
-    appId: '1:371294517760:android:e7cb39f3469651592cf6e5',
-    messagingSenderId: '371294517760',
-    projectId: 'grocery-shop-app-2d89b',
+    apiKey: 'AIzaSyCy33WaJnUU8GKbsuqRwMMwIRWHo7AwqRM',
+    appId: '1:583837435264:android:ff416e39f78a6ddd652d65',
+    messagingSenderId: '583837435264',
+    projectId: 'grocery-app-29daf',
     storageBucket: 'grocery-shop-app-2d89b.appspot.com',
   );
 

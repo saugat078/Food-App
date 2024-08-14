@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailTextController = TextEditingController();
   final _passTextController = TextEditingController();
   final _passFocusNode = FocusNode();
-  final _formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   var _obscureText = true;
   @override
   void dispose() {

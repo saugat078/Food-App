@@ -3,6 +3,7 @@ import 'package:grocery_shop_app/services/utils.dart';
 import 'package:grocery_shop_app/widgets/categories_widget.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
 
+
 class CategoriesScreen extends StatelessWidget {
   CategoriesScreen({Key? key}) : super(key: key);
 
@@ -39,6 +40,10 @@ List<Map<String, dynamic>> catInfo = [
      {
       'imgPath': 'assets/images/cat/grains.png',
       'catText': 'Grains',
+    },
+     {
+      'imgPath': 'assets/images/cat/grains.png',
+      'catText': 'Restaurants',
     },
   ];
   @override
