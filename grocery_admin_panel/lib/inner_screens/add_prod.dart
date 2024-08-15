@@ -272,7 +272,7 @@ class _UploadProductFormState extends State<UploadProductForm> {
                                         ),
                                         const SizedBox(height: 10),
                                         // Drop down menu code here
-                                        _categoryInputField(),
+                                        _categoryDropDown(),
 
                                         const SizedBox(
                                           height: 20,
@@ -484,95 +484,69 @@ class _UploadProductFormState extends State<UploadProductForm> {
     );
   }
 
-  // Widget _categoryDropDown() {
-  //   final color = Utils(context).color;
-  //   return Container(
-  //     color: Theme.of(context).scaffoldBackgroundColor,
-  //     child: Padding(
-  //       padding: const EdgeInsets.all(8.0),
-  //       child: DropdownButtonHideUnderline(
-  //           child: DropdownButton<String>(
-  //         style: TextStyle(
-  //           color: color,
-  //           fontWeight: FontWeight.w600,
-  //           fontSize: 18,
-  //         ),
-  //         value: _catValue,
-  //         onChanged: (value) {
-  //           setState(() {
-  //             _catValue = value!;
-  //           });
-  //           print(_catValue);
-  //         },
-  //         hint: const Text('Select a category'),
-  //         items: const [
-  //           DropdownMenuItem(
-  //             child: Text(
-  //               'Vegetables',
-  //             ),
-  //             value: 'Vegetables',
-  //           ),
-  //           DropdownMenuItem(
-  //             child: Text(
-  //               'Fruits',
-  //             ),
-  //             value: 'Fruits',
-  //           ),
-  //           DropdownMenuItem(
-  //             child: Text(
-  //               'Grains',
-  //             ),
-  //             value: 'Grains',
-  //           ),
-  //           DropdownMenuItem(
-  //             child: Text(
-  //               'Nuts',
-  //             ),
-  //             value: 'Nuts',
-  //           ),
-  //           DropdownMenuItem(
-  //             child: Text(
-  //               'Herbs',
-  //             ),
-  //             value: 'Herbs',
-  //           ),
-  //           DropdownMenuItem(
-  //             child: Text(
-  //               'Spices',
-  //             ),
-  //             value: 'Spices',
-  //           )
-  //         ],
-  //       )),
-  //     ),
-  //   );
-  // }
-  Widget _categoryInputField() {
-  return SizedBox(
-  height: 60, // Adjust height as needed
-  child: TextFormField(
-    controller: _categoryController,
-    key: const ValueKey('Category'),
-    validator: (value) {
-      if (value!.isEmpty) {
-        return 'Please enter a Category';
-      }
-      return null;
-    },
-    decoration: InputDecoration(
-      filled: true,
-      fillColor: Theme.of(context).scaffoldBackgroundColor,
-      border: InputBorder.none,
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Theme.of(context).primaryColor,
-          width: 1.0,
-        ),
+  Widget _categoryDropDown() {
+    final color = Utils(context).color;
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
+          value: _catValue,
+          onChanged: (value) {
+            setState(() {
+              _catValue = value!;
+            });
+            print(_catValue);
+          },
+          hint: const Text('Select a category'),
+          items: const [
+            DropdownMenuItem(
+              child: Text(
+                'Vegetables',
+              ),
+              value: 'Vegetables',
+            ),
+            DropdownMenuItem(
+              child: Text(
+                'Fruits',
+              ),
+              value: 'Fruits',
+            ),
+            DropdownMenuItem(
+              child: Text(
+                'Grains',
+              ),
+              value: 'Grains',
+            ),
+            DropdownMenuItem(
+              child: Text(
+                'Nuts',
+              ),
+              value: 'Nuts',
+            ),
+            DropdownMenuItem(
+              child: Text(
+                'Herbs',
+              ),
+              value: 'Herbs',
+            ),
+            DropdownMenuItem(
+              child: Text(
+                'Spices',
+              ),
+              value: 'Spices',
+            )
+          ],
+        )),
       ),
-    ),
-  ),
-);
+    );
+  }
 
-}
 
 }

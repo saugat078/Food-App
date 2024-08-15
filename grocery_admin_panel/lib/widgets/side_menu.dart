@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grocery_admin_panel/inner_screens/all_orders_screen.dart';
 import 'package:grocery_admin_panel/inner_screens/all_products.dart';
 import 'package:grocery_admin_panel/providers/dark_theme_provider.dart';
+import 'package:grocery_admin_panel/screens/uploadOfferImage.dart';
 import 'package:grocery_admin_panel/services/utils.dart';
 import 'package:grocery_admin_panel/widgets/text_widget.dart';
 import 'package:iconly/iconly.dart';
@@ -61,6 +62,17 @@ class _SideMenuState extends State<SideMenu> {
                             Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (context) => const AllOrdersScreen(),
+                ),
+              );
+            },
+            icon: IconlyBold.bag_2,
+          ),
+          DrawerListTile(
+            title: "Upload Offer Images",
+            press: () {
+                            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => ImagePickerExample(),
                 ),
               );
             },
