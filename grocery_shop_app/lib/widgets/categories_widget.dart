@@ -66,7 +66,6 @@ import 'package:flutter/material.dart';
 import 'package:grocery_shop_app/inner_screens/cat_screen.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
-
 import '../provider/dark_theme_provider.dart';
 
 class CategoriesWidget extends StatelessWidget {
