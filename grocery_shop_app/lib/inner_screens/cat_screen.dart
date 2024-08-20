@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_shop_app/models/products_model.dart';
 import 'package:grocery_shop_app/providers/products_provider.dart';
 import 'package:grocery_shop_app/widgets/empty_products_widget.dart';
 import 'package:provider/provider.dart';
-
 import '../services/utils.dart';
 import '../widgets/back_widget.dart';
 import '../widgets/feed_items.dart';

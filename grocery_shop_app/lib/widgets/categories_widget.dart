@@ -91,6 +91,7 @@ class CategoriesWidget extends StatelessWidget {
             arguments: catText);
       },
       child: Container(
+        padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: passedColor.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
@@ -99,23 +100,27 @@ class CategoriesWidget extends StatelessWidget {
             width: 2,
           ),
         ),
-        child: Column(
+        child: Row(
           children: [
             Container(
               height: _screenWidth * 0.3,
               width: _screenWidth * 0.3,
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12), // Rounded corners for the image
                 image: DecorationImage(
-                  image: AssetImage(imgPath),
-                  fit: BoxFit.fill,
+                  image: NetworkImage(imgPath),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            TextWidget(
-              text: catText,
-              color: color,
-              textSize: 20,
-              isTitle: true,
+            const SizedBox(width: 10), // Spacing between the image and the text
+            Expanded(
+              child: TextWidget(
+                text: catText,
+                color: color,
+                textSize: 20,
+                isTitle: true,
+              ),
             ),
           ],
         ),

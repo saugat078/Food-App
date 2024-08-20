@@ -78,7 +78,7 @@ Future<void> addMarkerAndPolyline(MapController mapController) async {
     );
 
     // Define a destination point (replace with your desired coordinates)
-    GeoPoint destination = GeoPoint(latitude: 26.6232, longitude: 87.9678);
+    GeoPoint destination = GeoPoint(latitude: 26.645110, longitude: 87.983905);
 
     // Add a marker for the destination
     await mapController.addMarker(

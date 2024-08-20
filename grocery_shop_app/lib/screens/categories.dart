@@ -229,7 +229,7 @@ class CategoriesScreen extends StatelessWidget {
           elevation: 0,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           title: TextWidget(
-            text: 'Categories',
+            text: ' Our Categories',
             color: color,
             textSize: 24,
             isTitle: true,
@@ -243,8 +243,10 @@ class CategoriesScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            _buildCategoryGrid(context, 'food'), // Fetch food categories
-            _buildCategoryGrid(context, 'liquor'), // Fetch liquor categories
+            // _buildCategoryGrid(context, 'Resturants'), 
+            // _buildCategoryGrid(context, 'liquor'), // Fetch liquor categories
+             _buildCategoryGrid(context,'Restaurants'),
+            const Center(child: Text('No liquor categories available.')),
           ],
         ),
       ),
@@ -256,8 +258,8 @@ class CategoriesScreen extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('categories')
-            .where('type', isEqualTo: categoryType)
+            .collection('resturants')
+            // .where('productCategoryName', isEqualTo: categoryType)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -272,8 +274,8 @@ class CategoriesScreen extends StatelessWidget {
 
           return GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 240 / 250,
+              crossAxisCount: 1,
+              childAspectRatio: 5 / 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
@@ -281,8 +283,8 @@ class CategoriesScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final category = categories[index];
               return CategoriesWidget(
-                catText: category['catText'],
-                imgPath: category['imgPath'],
+                catText: category['title'],
+                imgPath: category['imageUrl'],
                 passedColor: gridColors[index % gridColors.length],
               );
             },
