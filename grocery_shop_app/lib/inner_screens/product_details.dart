@@ -126,7 +126,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         TextWidget(
-                          text: '\$${usedPrice.toStringAsFixed(2)}/',
+                          text: '\Rs.${usedPrice.toStringAsFixed(2)}/',
                           color: Colors.green,
                           textSize: 22,
                           isTitle: true,
@@ -143,7 +143,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         Visibility(
                           visible: getCurrentProduct.isOnSale ? true : false,
                           child: Text(
-                            '\$${getCurrentProduct.price.toStringAsFixed(2)}',
+                            '\Rs.${getCurrentProduct.price.toStringAsFixed(2)}',
                             style: TextStyle(
                                 fontSize: 15,
                                 color: color,
@@ -265,7 +265,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   children: [
                                     TextWidget(
                                       text:
-                                          '\$${totalPrice.toStringAsFixed(2)}/',
+                                          '\Rs.${totalPrice.toStringAsFixed(2)}/',
                                       color: color,
                                       textSize: 20,
                                       isTitle: true,
