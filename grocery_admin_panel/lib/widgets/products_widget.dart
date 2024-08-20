@@ -19,7 +19,7 @@ class ProductWidget extends StatefulWidget {
 class _ProductWidgetState extends State<ProductWidget> {
   bool _isLoading = false;
   String title = '';
-  String productCat = '';
+  String? productCat='';
   String? imageUrl;
   String price = '0.0';
   double salePrice = 0.0;
@@ -85,7 +85,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                   title: title,
                   price: price,
                   salePrice: salePrice,
-                  productCat: productCat,
+                  productCat: productCat ?? '',
                   imageUrl: imageUrl == null
                       ? 'https://www.lifepng.com/wp-content/uploads/2020/11/Apricot-Large-Single-png-hd.png'
                       : imageUrl!,

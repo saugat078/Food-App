@@ -36,7 +36,7 @@ class _UploadProductFormState extends State<UploadProductForm> {
   String? _catValue;
  List<DropdownMenuItem<String>> _dropdownItems = [];
 
-  late final TextEditingController _titleController, _priceController,_categoryController;
+  late final TextEditingController _titleController, _priceController;
   int _groupValue = 1;
   bool isPiece = false;
   File? _pickedImage;
@@ -46,7 +46,6 @@ class _UploadProductFormState extends State<UploadProductForm> {
   void initState() {
     _priceController = TextEditingController();
     _titleController = TextEditingController();
-    _categoryController=TextEditingController();
   _fetchCategories();
     super.initState();
   }
@@ -60,7 +59,7 @@ class _UploadProductFormState extends State<UploadProductForm> {
     // Map the data to DropdownMenuItem list
     final items = querySnapshot.docs.map((doc) {
       return DropdownMenuItem<String>(
-        value: doc['title'],  // Assuming the title is stored under the 'title' key
+        value: doc['title'], 
         child: Text(doc['title']),
       );
     }).toList();
@@ -262,7 +261,7 @@ class _UploadProductFormState extends State<UploadProductForm> {
                                           MainAxisAlignment.start,
                                       children: [
                                         TextWidget(
-                                          text: 'Price in \$*',
+                                          text: 'Price in \Rs.*',
                                           color: color,
                                           isTitle: true,
                                         ),
@@ -273,7 +272,7 @@ class _UploadProductFormState extends State<UploadProductForm> {
                                           width: 100,
                                           child: TextFormField(
                                             controller: _priceController,
-                                            key: const ValueKey('Price \$'),
+                                            key: const ValueKey('Price \Rs.'),
                                             keyboardType: TextInputType.number,
                                             validator: (value) {
                                               if (value!.isEmpty) {

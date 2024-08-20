@@ -46,7 +46,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   // Title and price controllers
   late final TextEditingController _titleController, _priceController;
   // Category
-  late String _catValue;
+  late String? _catValue;
   // Sale
   String? _salePercent;
   late String percToShow;
@@ -283,20 +283,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                           ),
                                         ),
                                         const SizedBox(height: 20),
-                                        TextWidget(
-                                          text: 'Porduct category*',
-                                          color: color,
-                                          isTitle: true,
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Container(
-                                          color: _scaffoldColor,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8),
-                                            child: catDropDownWidget(color),
-                                          ),
-                                        ),
+                                        // TextWidget(
+                                        //   text: 'Porduct category*',
+                                        //   color: color,
+                                        //   isTitle: true,
+                                        // ),
+                                        // const SizedBox(height: 10),
+                                        // Container(
+                                        //   color: _scaffoldColor,
+                                        //   child: Padding(
+                                        //     padding: const EdgeInsets.symmetric(
+                                        //         horizontal: 8),
+                                        //     child: catDropDownWidget(color),
+                                        //   ),
+                                        // ),
                                         const SizedBox(
                                           height: 20,
                                         ),
@@ -546,46 +546,46 @@ class _EditProductScreenState extends State<EditProductScreen> {
     );
   }
 
-  DropdownButtonHideUnderline catDropDownWidget(Color color) {
-    return DropdownButtonHideUnderline(
-      child: DropdownButton<String>(
-        style: TextStyle(color: color),
-        items: const [
-          DropdownMenuItem<String>(
-            child: Text('Vegetables'),
-            value: 'Vegetables',
-          ),
-          DropdownMenuItem<String>(
-            child: Text('Fruits'),
-            value: 'Fruits',
-          ),
-          DropdownMenuItem<String>(
-            child: Text('Grains'),
-            value: 'Grains',
-          ),
-          DropdownMenuItem<String>(
-            child: Text('Nuts'),
-            value: 'Nuts',
-          ),
-          DropdownMenuItem<String>(
-            child: Text('Herbs'),
-            value: 'Herbs',
-          ),
-          DropdownMenuItem<String>(
-            child: Text('Spices'),
-            value: 'Spices',
-          ),
-        ],
-        onChanged: (value) {
-          setState(() {
-            _catValue = value!;
-          });
-        },
-        hint: const Text('Select a Category'),
-        value: _catValue,
-      ),
-    );
-  }
+  // DropdownButtonHideUnderline catDropDownWidget(Color color) {
+  //   return DropdownButtonHideUnderline(
+  //     child: DropdownButton<String>(
+  //       style: TextStyle(color: color),
+  //       items: const [
+  //         DropdownMenuItem<String>(
+  //           child: Text('Vegetables'),
+  //           value: 'Vegetables',
+  //         ),
+  //         DropdownMenuItem<String>(
+  //           child: Text('Fruits'),
+  //           value: 'Fruits',
+  //         ),
+  //         DropdownMenuItem<String>(
+  //           child: Text('Grains'),
+  //           value: 'Grains',
+  //         ),
+  //         DropdownMenuItem<String>(
+  //           child: Text('Nuts'),
+  //           value: 'Nuts',
+  //         ),
+  //         DropdownMenuItem<String>(
+  //           child: Text('Herbs'),
+  //           value: 'Herbs',
+  //         ),
+  //         DropdownMenuItem<String>(
+  //           child: Text('Spices'),
+  //           value: 'Spices',
+  //         ),
+  //       ],
+  //       onChanged: (value) {
+  //         setState(() {
+  //           _catValue = value!;
+  //         });
+  //       },
+  //       hint: const Text('Select a Category'),
+  //       value: _catValue,
+  //     ),
+  //   );
+  // }
 
   Future<void> _pickImage() async {
     // MOBILE

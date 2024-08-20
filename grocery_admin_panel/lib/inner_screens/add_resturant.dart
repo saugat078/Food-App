@@ -33,18 +33,16 @@ class UploadResturantForm extends StatefulWidget {
 
 class _UploadResturantFormState extends State<UploadResturantForm> {
   final _formKey = GlobalKey<FormState>();
-  String _catValue = 'Vegetables';
-  late final TextEditingController _titleController, _priceController,_categoryController;
-  int _groupValue = 1;
+  late final TextEditingController _titleController, _priceController;
   bool isPiece = false;
   File? _pickedImage;
   Uint8List webImage = Uint8List(8);
   String? imageUrl;
+  double ratingValue = 4.5;
   @override
   void initState() {
     _priceController = TextEditingController();
     _titleController = TextEditingController();
-    _categoryController=TextEditingController();
 
     super.initState();
   }
@@ -93,10 +91,11 @@ class _UploadResturantFormState extends State<UploadResturantForm> {
           'title': _titleController.text,
           'imageUrl': imageUrl,
           'createdAt': Timestamp.now(),
+          'rating':ratingValue
         });
         _clearForm();
         Fluttertoast.showToast(
-          msg: "Resturant uploaded succefully",
+          msg: "Restaurant uploaded succefully",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -125,7 +124,6 @@ class _UploadResturantFormState extends State<UploadResturantForm> {
 
   void _clearForm() {
     isPiece = false;
-    _groupValue = 1;
     _priceController.clear();
     _titleController.clear();
     setState(() {
