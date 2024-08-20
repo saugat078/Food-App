@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:grocery_admin_panel/Screens/loading_manager.dart';
+import 'package:grocery_admin_panel/screens/loading_manager.dart';
 import 'package:grocery_admin_panel/controllers/MenuControllerr.dart';
 import 'package:grocery_admin_panel/services/global_method.dart';
 import 'package:grocery_admin_panel/services/utils.dart';

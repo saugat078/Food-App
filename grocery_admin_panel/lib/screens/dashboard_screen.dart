@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:grocery_admin_panel/consts/constants.dart';
 import 'package:grocery_admin_panel/controllers/MenuControllerr.dart';
 import 'package:grocery_admin_panel/inner_screens/add_prod.dart';
+import 'package:grocery_admin_panel/inner_screens/add_resturant.dart';
 import 'package:grocery_admin_panel/responsive.dart';
 import 'package:grocery_admin_panel/services/utils.dart';
 import 'package:grocery_admin_panel/widgets/buttons.dart';
@@ -45,6 +46,17 @@ class DashboardScreen extends StatelessWidget {
                       icon: Icons.store,
                       backgroundColor: Colors.blue),
                   const Spacer(),
+                                    ButtonsWidget(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const UploadResturantForm(),
+                        ));
+                      },
+                      text: 'Add Resturant',
+                      icon: Icons.add,
+                      backgroundColor: Colors.blue),
+                  SizedBox(width: size.width * 0.05,),
+
                   ButtonsWidget(
                       onPressed: () {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -54,6 +66,7 @@ class DashboardScreen extends StatelessWidget {
                       text: 'Add Product',
                       icon: Icons.add,
                       backgroundColor: Colors.blue),
+ 
                 ],
               ),
             ),

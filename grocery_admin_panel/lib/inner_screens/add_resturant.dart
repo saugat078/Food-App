@@ -22,20 +22,18 @@ import 'package:uuid/uuid.dart';
 import '../responsive.dart';
 import '../services/global_method.dart';
 
-class UploadProductForm extends StatefulWidget {
-  static const routeName = '/UploadProductForm';
+class UploadResturantForm extends StatefulWidget {
+  static const routeName = '/UploadResturantForm';
 
-  const UploadProductForm({Key? key}) : super(key: key);
+  const UploadResturantForm({Key? key}) : super(key: key);
 
   @override
-  _UploadProductFormState createState() => _UploadProductFormState();
+  _UploadResturantFormState createState() => _UploadResturantFormState();
 }
 
-class _UploadProductFormState extends State<UploadProductForm> {
+class _UploadResturantFormState extends State<UploadResturantForm> {
   final _formKey = GlobalKey<FormState>();
-  String? _catValue;
- List<DropdownMenuItem<String>> _dropdownItems = [];
-
+  String _catValue = 'Vegetables';
   late final TextEditingController _titleController, _priceController,_categoryController;
   int _groupValue = 1;
   bool isPiece = false;
@@ -47,29 +45,8 @@ class _UploadProductFormState extends State<UploadProductForm> {
     _priceController = TextEditingController();
     _titleController = TextEditingController();
     _categoryController=TextEditingController();
-  _fetchCategories();
+
     super.initState();
-  }
-
-  Future<void> _fetchCategories() async {
-    // Fetch data from Firestore
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('resturants')
-        .get();
-
-    // Map the data to DropdownMenuItem list
-    final items = querySnapshot.docs.map((doc) {
-      return DropdownMenuItem<String>(
-        value: doc['title'],  // Assuming the title is stored under the 'title' key
-        child: Text(doc['title']),
-      );
-    }).toList();
-    print(items);
-
-    // Update the state with the fetched items
-    setState(() {
-      _dropdownItems = items;
-    });
   }
 
   @override
@@ -78,8 +55,6 @@ class _UploadProductFormState extends State<UploadProductForm> {
     _titleController.dispose();
     super.dispose();
   }
-
-  
 
   bool _isLoading = false;
   void _uploadForm() async {
@@ -100,7 +75,7 @@ class _UploadProductFormState extends State<UploadProductForm> {
         });
         final ref = FirebaseStorage.instance
         .ref()
-        .child('userImage')
+        .child('resturantImage')
         .child('$_uuid.jpg');
         // fb.StorageReference storageRef =
         //     fb.storage().ref().child('productsImages').child(_uuid + 'jpg');
@@ -113,20 +88,15 @@ class _UploadProductFormState extends State<UploadProductForm> {
           await ref.putFile(_pickedImage!);
         }
         imageUrl = await ref.getDownloadURL();
-        await FirebaseFirestore.instance.collection('products').doc(_uuid).set({
+        await FirebaseFirestore.instance.collection('resturants').doc(_uuid).set({
           'id': _uuid,
           'title': _titleController.text,
-          'price': _priceController.text,
-          'salePrice': 0.1,
           'imageUrl': imageUrl,
-          'productCategoryName': _catValue,
-          'isOnSale': false,
-          'isPiece': isPiece,
           'createdAt': Timestamp.now(),
         });
         _clearForm();
         Fluttertoast.showToast(
-          msg: "Product uploaded succefully",
+          msg: "Resturant uploaded succefully",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -210,7 +180,7 @@ class _UploadProductFormState extends State<UploadProductForm> {
                                 .read<MenuControllerr>()
                                 .controlAddProductsMenu();
                           },
-                          title: 'Add product',
+                          title: 'Add Resturant',
                           showTexField: false),
                     ),
                     const SizedBox(
@@ -229,7 +199,7 @@ class _UploadProductFormState extends State<UploadProductForm> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             TextWidget(
-                              text: 'Product title*',
+                              text: 'Resturant title*',
                               color: color,
                               isTitle: true,
                             ),
@@ -252,103 +222,7 @@ class _UploadProductFormState extends State<UploadProductForm> {
                             ),
                             Row(
                               children: [
-                                Expanded(
-                                  flex: 2,
-                                  child: FittedBox(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        TextWidget(
-                                          text: 'Price in \$*',
-                                          color: color,
-                                          isTitle: true,
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        SizedBox(
-                                          width: 100,
-                                          child: TextFormField(
-                                            controller: _priceController,
-                                            key: const ValueKey('Price \$'),
-                                            keyboardType: TextInputType.number,
-                                            validator: (value) {
-                                              if (value!.isEmpty) {
-                                                return 'Price is missed';
-                                              }
-                                              return null;
-                                            },
-                                            inputFormatters: <
-                                                TextInputFormatter>[
-                                              FilteringTextInputFormatter.allow(
-                                                  RegExp(r'[0-9.]')),
-                                            ],
-                                            decoration: inputDecoration,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        TextWidget(
-                                          text: 'Restaurant category*',
-                                          color: color,
-                                          isTitle: true,
-                                        ),
-                                        const SizedBox(height: 10),
-                                        // Drop down menu code here
-                                        _categoryDropDown(),
 
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        TextWidget(
-                                          text: 'Measure unit*',
-                                          color: color,
-                                          isTitle: true,
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        // Radio button code here
-                                        Row(
-                                          children: [
-                                            TextWidget(
-                                              text: 'KG',
-                                              color: color,
-                                            ),
-                                            Radio(
-                                              value: 1,
-                                              groupValue: _groupValue,
-                                              onChanged: (valuee) {
-                                                setState(() {
-                                                  _groupValue = 1;
-                                                  isPiece = false;
-                                                });
-                                              },
-                                              activeColor: Colors.green,
-                                            ),
-                                            TextWidget(
-                                              text: 'Piece',
-                                              color: color,
-                                            ),
-                                            Radio(
-                                              value: 2,
-                                              groupValue: _groupValue,
-                                              onChanged: (valuee) {
-                                                setState(() {
-                                                  _groupValue = 2;
-                                                  isPiece = true;
-                                                });
-                                              },
-                                              activeColor: Colors.green,
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
                                 // Image to be picked code is here
                                 Expanded(
                                   flex: 4,
@@ -508,33 +382,4 @@ class _UploadProductFormState extends State<UploadProductForm> {
           )),
     );
   }
-
-  Widget _categoryDropDown() {
-    final color = Utils(context).color;
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-          value: _catValue,
-          onChanged: (value) {
-            setState(() {
-              _catValue = value!;
-            });
-            print(_catValue);
-          },
-          hint: const Text('Select a Resturant'),
-          items: _dropdownItems
-        )),
-      ),
-    );
-  }
-
-
 }
