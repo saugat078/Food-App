@@ -82,7 +82,7 @@ Future<void> fetchProducts() async {
       } else if (element.get('price') is String) {
         price = double.tryParse(element.get('price')) ?? 0.0;
       } else {
-        price = 0.0; // Default value in case of unexpected type
+        price = 0.0; 
       }
 
       // Handle salePrice field
@@ -94,7 +94,7 @@ Future<void> fetchProducts() async {
       } else if (element.get('salePrice') is String) {
         salePrice = double.tryParse(element.get('salePrice')) ?? 0.0;
       } else {
-        salePrice = 0.0; // Default value in case of unexpected type
+        salePrice = 0.0;
       }
 
       _productsList.insert(

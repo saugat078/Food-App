@@ -100,8 +100,7 @@ class _FeedsScreenState extends State<FeedsScreen> {
          _searchTextController!.text.isNotEmpty &&
                         listProductSearch.isEmpty
                     ? const EmptyProdWidget(text: 'No Products Found!')
-                    : Padding(
-                        padding: const EdgeInsets.all(15.0),
+                    : SizedBox(height:size.height *0.8,
                         child: GridView.count(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
