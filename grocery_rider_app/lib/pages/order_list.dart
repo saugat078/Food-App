@@ -157,7 +157,7 @@ class OrderCard extends StatelessWidget {
                   SizedBox(height: 4),
                   Text(restaurantName),
                   Text(orderDate),
-                  Text('\$${price}'),
+                  Text('\Rs.${price}'),
                 ],
               ),
             ),
