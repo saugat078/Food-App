@@ -22,22 +22,18 @@ import 'package:uuid/uuid.dart';
 import '../responsive.dart';
 import '../services/global_method.dart';
 
-class UploadProductForm extends StatefulWidget {
-  static const routeName = '/UploadProductForm';
+class UploadLiquorForm extends StatefulWidget {
+  static const routeName = '/UploadLiquorForm';
 
-  const UploadProductForm({Key? key}) : super(key: key);
+  const UploadLiquorForm({Key? key}) : super(key: key);
 
   @override
-  _UploadProductFormState createState() => _UploadProductFormState();
+  _UploadLiquorFormState createState() => _UploadLiquorFormState();
 }
 
-class _UploadProductFormState extends State<UploadProductForm> {
+class _UploadLiquorFormState extends State<UploadLiquorForm> {
   final _formKey = GlobalKey<FormState>();
-  String? _catValue;
- List<DropdownMenuItem<String>> _dropdownItems = [];
-
   late final TextEditingController _titleController, _priceController;
-  int _groupValue = 1;
   bool isPiece = false;
   File? _pickedImage;
   Uint8List webImage = Uint8List(8);
@@ -46,66 +42,9 @@ class _UploadProductFormState extends State<UploadProductForm> {
   void initState() {
     _priceController = TextEditingController();
     _titleController = TextEditingController();
-  _fetchCategories();
+
     super.initState();
   }
-
-  // Future<void> _fetchCategories() async {
-  //   // Fetch data from Firestore
-  //   final querySnapshot = await FirebaseFirestore.instance
-  //       .collection('resturants')
-  //       .get();
-
-  //   // Map the data to DropdownMenuItem list
-  //   final items = querySnapshot.docs.map((doc) {
-  //     return DropdownMenuItem<String>(
-  //       value: doc['title'], 
-  //       child: Text(doc['title']),
-  //     );
-  //   }).toList();
-  //   print(items);
-
-  //   // Update the state with the fetched items
-  //   setState(() {
-  //     _dropdownItems = items;
-  //   });
-  // }
-Future<void> _fetchCategories() async {
-  List<DropdownMenuItem<String>> items = [];
-
-  // Fetch data from the 'restaurants' collection
-  final restaurantsSnapshot = await FirebaseFirestore.instance
-      .collection('resturants')
-      .get();
-
-  // Map the 'restaurants' data to DropdownMenuItem list
-  final restaurantItems = restaurantsSnapshot.docs.map((doc) {
-    return DropdownMenuItem<String>(
-      value: doc['title'],
-      child: Text(doc['title']),
-    );
-  }).toList();
-  items.addAll(restaurantItems);
-
-  // Fetch data from the 'liquor' collection
-  final liquorSnapshot = await FirebaseFirestore.instance
-      .collection('liquors')
-      .get();
-
-  // Map the 'liquor' data to DropdownMenuItem list
-  final liquorItems = liquorSnapshot.docs.map((doc) {
-    return DropdownMenuItem<String>(
-      value: doc['title'],
-      child: Text(doc['title']),
-    );
-  }).toList();
-  items.addAll(liquorItems);
-
-  // Update the state with the combined fetched items
-  setState(() {
-    _dropdownItems = items;
-  });
-}
 
   @override
   void dispose() {
@@ -113,8 +52,6 @@ Future<void> _fetchCategories() async {
     _titleController.dispose();
     super.dispose();
   }
-
-  
 
   bool _isLoading = false;
   void _uploadForm() async {
@@ -135,7 +72,7 @@ Future<void> _fetchCategories() async {
         });
         final ref = FirebaseStorage.instance
         .ref()
-        .child('userImage')
+        .child('liquorImage')
         .child('$_uuid.jpg');
         // fb.StorageReference storageRef =
         //     fb.storage().ref().child('productsImages').child(_uuid + 'jpg');
@@ -148,20 +85,15 @@ Future<void> _fetchCategories() async {
           await ref.putFile(_pickedImage!);
         }
         imageUrl = await ref.getDownloadURL();
-        await FirebaseFirestore.instance.collection('products').doc(_uuid).set({
+        await FirebaseFirestore.instance.collection('liquors').doc(_uuid).set({
           'id': _uuid,
           'title': _titleController.text,
-          'price': _priceController.text,
-          'salePrice': 0.1,
           'imageUrl': imageUrl,
-          'productCategoryName': _catValue,
-          'isOnSale': false,
-          'isPiece': isPiece,
-          'createdAt': Timestamp.now(),
+          'createdAt': Timestamp.now()
         });
         _clearForm();
         Fluttertoast.showToast(
-          msg: "Product uploaded succefully",
+          msg: "Liquor uploaded succefully",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -190,7 +122,6 @@ Future<void> _fetchCategories() async {
 
   void _clearForm() {
     isPiece = false;
-    _groupValue = 1;
     _priceController.clear();
     _titleController.clear();
     setState(() {
@@ -245,7 +176,7 @@ Future<void> _fetchCategories() async {
                                 .read<MenuControllerr>()
                                 .controlAddProductsMenu();
                           },
-                          title: 'Add product',
+                          title: 'Add Liquors',
                           showTexField: false),
                     ),
                     const SizedBox(
@@ -264,7 +195,7 @@ Future<void> _fetchCategories() async {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             TextWidget(
-                              text: 'Product title*',
+                              text: 'Liquor title*',
                               color: color,
                               isTitle: true,
                             ),
@@ -287,103 +218,7 @@ Future<void> _fetchCategories() async {
                             ),
                             Row(
                               children: [
-                                Expanded(
-                                  flex: 2,
-                                  child: FittedBox(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        TextWidget(
-                                          text: 'Price in \Rs.*',
-                                          color: color,
-                                          isTitle: true,
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        SizedBox(
-                                          width: 100,
-                                          child: TextFormField(
-                                            controller: _priceController,
-                                            key: const ValueKey('Price \Rs.'),
-                                            keyboardType: TextInputType.number,
-                                            validator: (value) {
-                                              if (value!.isEmpty) {
-                                                return 'Price is missed';
-                                              }
-                                              return null;
-                                            },
-                                            inputFormatters: <
-                                                TextInputFormatter>[
-                                              FilteringTextInputFormatter.allow(
-                                                  RegExp(r'[0-9.]')),
-                                            ],
-                                            decoration: inputDecoration,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        TextWidget(
-                                          text: 'Category*',
-                                          color: color,
-                                          isTitle: true,
-                                        ),
-                                        const SizedBox(height: 10),
-                                        // Drop down menu code here
-                                        _categoryDropDown(),
 
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        TextWidget(
-                                          text: 'Measure unit*',
-                                          color: color,
-                                          isTitle: true,
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        // Radio button code here
-                                        Row(
-                                          children: [
-                                            TextWidget(
-                                              text: 'KG',
-                                              color: color,
-                                            ),
-                                            Radio(
-                                              value: 1,
-                                              groupValue: _groupValue,
-                                              onChanged: (valuee) {
-                                                setState(() {
-                                                  _groupValue = 1;
-                                                  isPiece = false;
-                                                });
-                                              },
-                                              activeColor: Colors.green,
-                                            ),
-                                            TextWidget(
-                                              text: 'Piece',
-                                              color: color,
-                                            ),
-                                            Radio(
-                                              value: 2,
-                                              groupValue: _groupValue,
-                                              onChanged: (valuee) {
-                                                setState(() {
-                                                  _groupValue = 2;
-                                                  isPiece = true;
-                                                });
-                                              },
-                                              activeColor: Colors.green,
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
                                 // Image to be picked code is here
                                 Expanded(
                                   flex: 4,
@@ -543,33 +378,4 @@ Future<void> _fetchCategories() async {
           )),
     );
   }
-
-  Widget _categoryDropDown() {
-    final color = Utils(context).color;
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-          value: _catValue,
-          onChanged: (value) {
-            setState(() {
-              _catValue = value!;
-            });
-            print(_catValue);
-          },
-          hint: const Text('Select a Resturant'),
-          items: _dropdownItems
-        )),
-      ),
-    );
-  }
-
-
 }

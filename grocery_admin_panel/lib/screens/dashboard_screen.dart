@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_admin_panel/consts/constants.dart';
 import 'package:grocery_admin_panel/controllers/MenuControllerr.dart';
+import 'package:grocery_admin_panel/inner_screens/add_liquor.dart';
 import 'package:grocery_admin_panel/inner_screens/add_prod.dart';
 import 'package:grocery_admin_panel/inner_screens/add_resturant.dart';
 import 'package:grocery_admin_panel/responsive.dart';
@@ -53,6 +54,16 @@ class DashboardScreen extends StatelessWidget {
                         ));
                       },
                       text: 'Add Resturant',
+                      icon: Icons.add,
+                      backgroundColor: Colors.blue),
+                  const Spacer(),
+                                    ButtonsWidget(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const UploadLiquorForm(),
+                        ));
+                      },
+                      text: 'Add Liquor',
                       icon: Icons.add,
                       backgroundColor: Colors.blue),
                   SizedBox(width: size.width * 0.05,),
