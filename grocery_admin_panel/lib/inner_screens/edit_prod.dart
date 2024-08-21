@@ -62,6 +62,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   // while loading
   bool _isLoading = false;
   String? imageUri;
+  List<DropdownMenuItem<String>> _dropdownItems = [];
+
   @override
   void initState() {
     // set the price and title initial values and initialize the controllers
@@ -74,6 +76,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
     _isPiece = widget.isPiece;
     val = _isPiece ? 2 : 1;
     _imageUrl = widget.imageUrl;
+     
+  _fetchCategories();
+
     // Calculate the percentage
     percToShow = (100 -
                 (_salePrice * 100) /
@@ -84,7 +89,26 @@ class _EditProductScreenState extends State<EditProductScreen> {
         '%';
     super.initState();
   }
+Future<void> _fetchCategories() async {
+    // Fetch data from Firestore
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('resturants')
+        .get();
 
+    // Map the data to DropdownMenuItem list
+    final items = querySnapshot.docs.map((doc) {
+      return DropdownMenuItem<String>(
+        value: doc['title'], 
+        child: Text(doc['title']),
+      );
+    }).toList();
+    print(items);
+
+    // Update the state with the fetched items
+    setState(() {
+      _dropdownItems = items;
+    });
+  }
   @override
   void dispose() {
     // Dispose the controllers
@@ -283,20 +307,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                           ),
                                         ),
                                         const SizedBox(height: 20),
-                                        // TextWidget(
-                                        //   text: 'Porduct category*',
-                                        //   color: color,
-                                        //   isTitle: true,
-                                        // ),
-                                        // const SizedBox(height: 10),
-                                        // Container(
-                                        //   color: _scaffoldColor,
-                                        //   child: Padding(
-                                        //     padding: const EdgeInsets.symmetric(
-                                        //         horizontal: 8),
-                                        //     child: catDropDownWidget(color),
-                                        //   ),
-                                        // ),
+                                        TextWidget(
+                                          text: 'Porduct category*',
+                                          color: color,
+                                          isTitle: true,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Container(
+                                          color: _scaffoldColor,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            child: catDropDownWidget(color),
+                                          ),
+                                        ),
                                         const SizedBox(
                                           height: 20,
                                         ),
@@ -546,46 +570,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
     );
   }
 
-  // DropdownButtonHideUnderline catDropDownWidget(Color color) {
-  //   return DropdownButtonHideUnderline(
-  //     child: DropdownButton<String>(
-  //       style: TextStyle(color: color),
-  //       items: const [
-  //         DropdownMenuItem<String>(
-  //           child: Text('Vegetables'),
-  //           value: 'Vegetables',
-  //         ),
-  //         DropdownMenuItem<String>(
-  //           child: Text('Fruits'),
-  //           value: 'Fruits',
-  //         ),
-  //         DropdownMenuItem<String>(
-  //           child: Text('Grains'),
-  //           value: 'Grains',
-  //         ),
-  //         DropdownMenuItem<String>(
-  //           child: Text('Nuts'),
-  //           value: 'Nuts',
-  //         ),
-  //         DropdownMenuItem<String>(
-  //           child: Text('Herbs'),
-  //           value: 'Herbs',
-  //         ),
-  //         DropdownMenuItem<String>(
-  //           child: Text('Spices'),
-  //           value: 'Spices',
-  //         ),
-  //       ],
-  //       onChanged: (value) {
-  //         setState(() {
-  //           _catValue = value!;
-  //         });
-  //       },
-  //       hint: const Text('Select a Category'),
-  //       value: _catValue,
-  //     ),
-  //   );
-  // }
+  DropdownButtonHideUnderline catDropDownWidget(Color color) {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<String>(
+        style: TextStyle(color: color),
+        items:_dropdownItems,
+        onChanged: (value) {
+          setState(() {
+            _catValue = value!;
+          });
+        },
+        hint: const Text('Select a Category'),
+        value: _catValue,
+      ),
+    );
+  }
 
   Future<void> _pickImage() async {
     // MOBILE

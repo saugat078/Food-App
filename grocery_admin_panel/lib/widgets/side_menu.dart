@@ -72,7 +72,7 @@ class _SideMenuState extends State<SideMenu> {
             press: () {
                             Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (context) => ImagePickerExample(),
+                  builder: (context) => OfferImageUpload(),
                 ),
               );
             },
