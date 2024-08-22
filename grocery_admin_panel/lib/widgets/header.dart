@@ -62,7 +62,7 @@ class Header extends StatelessWidget {
                         child: const Icon(
                           Icons.search,
                           size: 25,
-                        ),
+                        )
                       ),
                     ),
                   ),

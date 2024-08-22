@@ -144,8 +144,8 @@ class _ProductWidgetState extends State<ProductWidget> {
                   children: [
                     TextWidget(
                       text: isOnSale
-                          ? '\$${salePrice.toStringAsFixed(2)}'
-                          : '\$$price',
+                          ? '\Rs.${salePrice.toStringAsFixed(2)}'
+                          : '\Rs.$price',
                       color: color,
                       textSize: 18,
                     ),
@@ -155,7 +155,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                     Visibility(
                         visible: isOnSale,
                         child: Text(
-                          '\$$price',
+                          '\Rs.$price',
                           style: TextStyle(
                               decoration: TextDecoration.lineThrough,
                               color: color),

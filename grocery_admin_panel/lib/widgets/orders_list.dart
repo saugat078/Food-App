@@ -1,76 +1,4 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/material.dart';
 
-// import '../consts/constants.dart';
-// import 'orders_widget.dart';
-
-// class OrdersList extends StatelessWidget {
-//   const OrdersList({Key? key, this.isInDashboard = true}) : super(key: key);
-//   final bool isInDashboard;
-//   @override
-//   Widget build(BuildContext context) {
-//     return StreamBuilder<QuerySnapshot>(
-//       //there was a null error just add those lines
-//       stream: FirebaseFirestore.instance.collection('orders').snapshots(),
-
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return const Center(
-//             child: CircularProgressIndicator(),
-//           );
-//         } else if (snapshot.connectionState == ConnectionState.active) {
-//           if (snapshot.data!.docs.isNotEmpty) {
-//             return Container(
-//               padding: const EdgeInsets.all(defaultPadding),
-//               decoration: BoxDecoration(
-//                 color: Theme.of(context).cardColor,
-//                 borderRadius: const BorderRadius.all(Radius.circular(10)),
-//               ),
-//               child: ListView.builder(
-//                   physics: const NeverScrollableScrollPhysics(),
-//                   shrinkWrap: true,
-//                   itemCount: isInDashboard && snapshot.data!.docs.length > 4
-//                       ? 4
-//                       : snapshot.data!.docs.length,
-//                   itemBuilder: (ctx, index) {
-//                     return Column(
-//                       children: [
-//                         OrdersWidget(
-//                           price: snapshot.data!.docs[index]['price'],
-//                           totalPrice: snapshot.data!.docs[index]['totalPrice'],
-//                           productId: snapshot.data!.docs[index]['productId'],
-//                           userId: snapshot.data!.docs[index]['userId'],
-//                           quantity: snapshot.data!.docs[index]['quantity'],
-//                           orderDate: snapshot.data!.docs[index]['orderDate'],
-//                           imageUrl: snapshot.data!.docs[index]['imageUrl'],
-//                           userName: snapshot.data!.docs[index]['userName'],
-//                         ),
-//                         const Divider(
-//                           thickness: 3,
-//                         ),
-//                       ],
-//                     );
-//                   }),
-//             );
-//           } else {
-//             return const Center(
-//               child: Padding(
-//                 padding: EdgeInsets.all(18.0),
-//                 child: Text('Your store is empty'),
-//               ),
-//             );
-//           }
-//         }
-//         return const Center(
-//           child: Text(
-//             'Something went wrong',
-//             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -136,11 +64,11 @@ class OrdersList extends StatelessWidget {
     var orderData = order.data() as Map<String, dynamic>;
     
     // Fetch product name
-    var productSnapshot = await FirebaseFirestore.instance
-        .collection('products')
-        .doc(orderData['productId'])
-        .get();
-    var productName = productSnapshot.data()?['title'] ?? 'Unknown Product';
+    // var productSnapshot = await FirebaseFirestore.instance
+    //     .collection('products')
+    //     .doc(orderData['productId'])
+    //     .get();
+    // var productName = productSnapshot.data()?['title'] ?? 'Unknown Product';
 
     // Fetch user name
     var userSnapshot = await FirebaseFirestore.instance
@@ -150,7 +78,7 @@ class OrdersList extends StatelessWidget {
     var userName = userSnapshot.data()?['name'] ?? 'Unknown User';
 
     // Add the fetched names to the order data
-    orderData['productName'] = productName;
+    // orderData['productName'] = productName;
     orderData['userName'] = userName;
 
     return orderData;
@@ -188,25 +116,25 @@ class OrderCard extends StatelessWidget {
             SizedBox(height: 12),
             Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    orderData['imageUrl'],
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                // ClipRRect(
+                //   borderRadius: BorderRadius.circular(8),
+                //   child: Image.network(
+                //     orderData['imageUrl'],
+                //     width: 80,
+                //     height: 80,
+                //     fit: BoxFit.cover,
+                //   ),
+                // ),
                 SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(orderData['productName'],
-                          style: TextStyle(fontSize: 16)),
-                      SizedBox(height: 4),
-                      Text('Quantity: ${orderData['quantity']}',
-                          style: TextStyle(color: Colors.grey)),
+                      // Text(orderData['productName'],
+                      //     style: TextStyle(fontSize: 16)),
+                      // SizedBox(height: 4),
+                      // Text('Quantity: ${orderData['quantity']}',
+                      //     style: TextStyle(color: Colors.grey)),
                       SizedBox(height: 4),
                       Text('Total: \$${orderData['totalPrice'].toStringAsFixed(2)}',
                           style: TextStyle(fontWeight: FontWeight.bold)),
