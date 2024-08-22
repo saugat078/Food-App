@@ -89,17 +89,26 @@ class CartScreen extends StatelessWidget {
     final productProvider = Provider.of<ProductsProvider>(ctx);
     final ordersProvider = Provider.of<OrdersProvider>(ctx);
     double total = 0.0;
+
+    List<Map<String, dynamic>> products = [];
+
     cartProvider.getCartItems.forEach((key, value) {
       final getCurrProduct = productProvider.findProById(value.productId);
-      total += (getCurrProduct.isOnSale
-              ? getCurrProduct.salePrice
-              : getCurrProduct.price) *
-          value.quantity;
+      final productPrice = getCurrProduct.isOnSale
+          ? getCurrProduct.salePrice
+          : getCurrProduct.price;
+      total += productPrice * value.quantity;
+
+      products.add({
+        'productId': value.productId,
+        'quantity': value.quantity,
+        'price': productPrice,
+      });
     });
+
     return SizedBox(
       width: double.infinity,
       height: size.height * 0.1,
-      // color: ,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(children: [
@@ -110,45 +119,39 @@ class CartScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               onTap: () async {
                 User? user = authInstance.currentUser;
-                final productProvider =
-                    Provider.of<ProductsProvider>(ctx, listen: false);
 
-                cartProvider.getCartItems.forEach((key, value) async {
-                  final getCurrProduct = productProvider.findProById(
-                    value.productId,
+                if (user == null) {
+                  GlobalMethods.errorDialog(
+                      subtitle: 'No user logged in', context: ctx);
+                  return;
+                }
+
+                try {
+                  final orderId = const Uuid().v4();
+                  await FirebaseFirestore.instance
+                      .collection('orders')
+                      .doc(orderId)
+                      .set({
+                    'orderId': orderId,
+                    'userId': user.uid,
+                    'products': products,
+                    'totalPrice': total,
+                    'userName': user.displayName,
+                    'orderDate': Timestamp.now(),
+                  });
+
+                  await cartProvider.clearOnlineCart();
+                  cartProvider.clearLocalCart();
+                  ordersProvider.fetchOrders();
+                  await Fluttertoast.showToast(
+                    msg: "Your order has been placed",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
                   );
-                  try {
-                    final orderId = const Uuid().v4();
-                    await FirebaseFirestore.instance
-                        .collection('orders')
-                        .doc(orderId)
-                        .set({
-                      'orderId': orderId,
-                      'userId': user!.uid,
-                      'productId': value.productId,
-                      'price': (getCurrProduct.isOnSale
-                              ? getCurrProduct.salePrice
-                              : getCurrProduct.price) *
-                          value.quantity,
-                      'totalPrice': total,
-                      'quantity': value.quantity,
-                      'imageUrl': getCurrProduct.imageUrl,
-                      'userName': user.displayName,
-                      'orderDate': Timestamp.now(),
-                    });
-                    await cartProvider.clearOnlineCart();
-                    cartProvider.clearLocalCart();
-                    ordersProvider.fetchOrders();
-                    await Fluttertoast.showToast(
-                      msg: "Your order has been placed",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                    );
-                  } catch (error) {
-                    GlobalMethods.errorDialog(
-                        subtitle: error.toString(), context: ctx);
-                  } finally {}
-                });
+                } catch (error) {
+                  GlobalMethods.errorDialog(
+                      subtitle: error.toString(), context: ctx);
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

@@ -10,8 +10,6 @@ import 'package:grocery_shop_app/services/utils.dart';
 import 'package:grocery_shop_app/widgets/heart_btn.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
-
-import '../inner_screens/on_sale_screen.dart';
 import '../inner_screens/product_details.dart';
 import '../services/global_methods.dart';
 import 'price_widget.dart';
