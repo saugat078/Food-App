@@ -48,7 +48,7 @@ class OnSaleScreen extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
-                childAspectRatio: size.width / (size.height * 0.40),
+                childAspectRatio: size.width / (size.height * 0.50),
                 children: List.generate(productOnSale.length, (index) {
                   return ChangeNotifierProvider.value(
                       value: productOnSale[index], child: (const OnSaleWidget()));

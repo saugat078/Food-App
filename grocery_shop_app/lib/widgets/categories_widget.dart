@@ -32,54 +32,55 @@ class CategoriesWidget extends StatelessWidget {
         : _buildRowWidget(context, _screenWidth, color);
   }
 
-Widget _buildRowWidget(BuildContext context, double _screenWidth, Color color) {
-  return InkWell(
-    onTap: () {
-      Navigator.pushNamed(context, CategoryScreen.routeName, arguments: catText);
-    },
-    child: Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: passedColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: passedColor.withOpacity(0.7),
-          width: 2,
+
+  Widget _buildRowWidget(BuildContext context, double _screenWidth, Color color) {
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, CategoryScreen.routeName, arguments: catText);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: passedColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: passedColor.withOpacity(0.7),
+            width: 2,
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: _screenWidth * 0.3,
-            width: _screenWidth * 0.3,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                image: NetworkImage(imgPath),
-                fit: BoxFit.cover,
+        child: Row(
+          children: [
+            Container(
+              width: _screenWidth * 0.25,
+              height: _screenWidth * 0.25,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: NetworkImage(imgPath),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: SingleChildScrollView( // Added scroll view here
+            const SizedBox(width: 10),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 12),
                   TextWidget(
                     text: catText,
                     color: color,
-                    textSize: 20,
+                    textSize: _screenWidth < 600 ? 16 : 20,
                     isTitle: true,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   RatingBar.builder(
                     initialRating: rating!,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
                     itemCount: 5,
+                    itemSize: _screenWidth < 600 ? 16 : 20,
                     itemPadding: const EdgeInsets.symmetric(horizontal: 1.0),
                     itemBuilder: (context, _) => const Icon(
                       Icons.star,
@@ -92,12 +93,11 @@ Widget _buildRowWidget(BuildContext context, double _screenWidth, Color color) {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
 
   Widget _buildGridWidget(BuildContext context, double _screenWidth,double _height, Color color) {
