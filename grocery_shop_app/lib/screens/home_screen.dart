@@ -298,7 +298,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildOnSaleList(List<ProductModel> productsOnSale, Size size) {
-      print('Products on sale count: ${productsOnSale}');
+      print('Products on sale: ${productsOnSale.toList()}');
+        print('Products on sale: ${productsOnSale.map((p) => "${p.id}: ${p.title}").toList()}');
+
 
     return SizedBox(
       height: size.height * 0.3,
