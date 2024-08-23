@@ -6,17 +6,19 @@ import '../services/global_method.dart';
 import '../services/utils.dart';
 import 'text_widget.dart';
 
-class ProductWidget extends StatefulWidget {
-  const ProductWidget({
+class OrderProductWidget extends StatefulWidget {
+  const OrderProductWidget({
     Key? key,
     required this.id,
+    required this.quantity
   }) : super(key: key);
   final String id;
+  final int quantity;
   @override
-  _ProductWidgetState createState() => _ProductWidgetState();
+  _OrderProductWidgetState createState() => _OrderProductWidgetState();
 }
 
-class _ProductWidgetState extends State<ProductWidget> {
+class _OrderProductWidgetState extends State<OrderProductWidget> {
   bool _isLoading = false;
   String title = '';
   String? productCat='';
@@ -78,22 +80,6 @@ class _ProductWidgetState extends State<ProductWidget> {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => EditProductScreen(
-                  id: widget.id,
-                  title: title,
-                  price: price,
-                  salePrice: salePrice,
-                  productCat: productCat ?? '',
-                  imageUrl: imageUrl == null
-                      ? 'https://www.lifepng.com/wp-content/uploads/2020/11/Apricot-Large-Single-png-hd.png'
-                      : imageUrl!,
-                  isOnSale: isOnSale,
-                  isPiece: isPiece,
-                ),
-              ),
-            );
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -117,24 +103,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                       ),
                     ),
                     const Spacer(),
-                    PopupMenuButton(
-                        itemBuilder: (context) => [
-                              PopupMenuItem(
-                                onTap: () {
-                                  
-                                },
-                                child: Text('Edit'),
-                                value: 1,
-                              ),
-                              PopupMenuItem(
-                                onTap: () {},
-                                child: Text(
-                                  'Delete',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                                value: 2,
-                              ),
-                            ])
+                    
                   ],
                 ),
                 const SizedBox(
@@ -177,13 +146,22 @@ class _ProductWidgetState extends State<ProductWidget> {
                   textSize: 24,
                   isTitle: true,
                 ),
-                const SizedBox(
+               const SizedBox(
                   height: 2,
                 ),
                 TextWidget(
                   text: productCat!,
                   color: color,
-                  textSize: 14,
+                  textSize: 12,
+                  isTitle: false,
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                TextWidget(
+                  text: 'Quantity Ordered: ${widget.quantity.toString()}',
+                  color: color,
+                  textSize: 10,
                   isTitle: false,
                 ),
               ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_admin_panel/controllers/MenuControllerr.dart';
+import 'package:grocery_admin_panel/widgets/gird_order_products.dart';
 import 'package:provider/provider.dart';
 import '../responsive.dart';
 import '../services/utils.dart';
@@ -8,8 +9,8 @@ import '../widgets/header.dart';
 import '../widgets/side_menu.dart';
 
 class OrderProductsScreen extends StatefulWidget {
-  const OrderProductsScreen({Key? key}) : super(key: key);
-
+  const OrderProductsScreen({Key? key, required this.orderId}) : super(key: key);
+  final String orderId;
   @override
   State<OrderProductsScreen> createState() => _OrderProductsScreenState();
 }
@@ -52,7 +53,7 @@ class _OrderProductsScreenState extends State<OrderProductsScreen> {
                                 .read<MenuControllerr>()
                                 .controlProductsMenu();
                           },
-                          title: 'All Products',
+                          title: 'All Products of Order No: ${widget.orderId.substring(0, 8)}',
                         ),
                       ),
                       const SizedBox(
@@ -61,17 +62,19 @@ class _OrderProductsScreenState extends State<OrderProductsScreen> {
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Responsive(
-                          mobile: ProductGridWidget(
+                          mobile: OrderProductGridWidget(
                             crossAxisCount: size.width < 650 ? 2 : 4,
                             childAspectRatio:
                                 size.width < 650 && size.width > 350
                                     ? 1.1
                                     : 0.8,
                             isInMain: false,
+                            orderId: widget.orderId
                           ),
-                          desktop: ProductGridWidget(
+                          desktop: OrderProductGridWidget(
                             childAspectRatio: size.width < 1400 ? 0.8 : 1.05,
                             isInMain: false,
+                            orderId: widget.orderId
                           ),
                         ),
                       ),

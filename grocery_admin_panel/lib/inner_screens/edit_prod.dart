@@ -90,25 +90,41 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.initState();
   }
 Future<void> _fetchCategories() async {
-    // Fetch data from Firestore
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('resturants')
-        .get();
+  List<DropdownMenuItem<String>> items = [];
 
-    // Map the data to DropdownMenuItem list
-    final items = querySnapshot.docs.map((doc) {
-      return DropdownMenuItem<String>(
-        value: doc['title'], 
-        child: Text(doc['title']),
-      );
-    }).toList();
-    print(items);
+  // Fetch data from the 'restaurants' collection
+  final restaurantsSnapshot = await FirebaseFirestore.instance
+      .collection('resturants')
+      .get();
 
-    // Update the state with the fetched items
-    setState(() {
-      _dropdownItems = items;
-    });
-  }
+  // Map the 'restaurants' data to DropdownMenuItem list
+  final restaurantItems = restaurantsSnapshot.docs.map((doc) {
+    return DropdownMenuItem<String>(
+      value: doc['title'],
+      child: Text(doc['title']),
+    );
+  }).toList();
+  items.addAll(restaurantItems);
+
+  // Fetch data from the 'liquor' collection
+  final liquorSnapshot = await FirebaseFirestore.instance
+      .collection('liquors')
+      .get();
+
+  // Map the 'liquor' data to DropdownMenuItem list
+  final liquorItems = liquorSnapshot.docs.map((doc) {
+    return DropdownMenuItem<String>(
+      value: doc['title'],
+      child: Text(doc['title']),
+    );
+  }).toList();
+  items.addAll(liquorItems);
+
+  // Update the state with the combined fetched items
+  setState(() {
+    _dropdownItems = items;
+  });
+}
   @override
   void dispose() {
     // Dispose the controllers

@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_admin_panel/inner_screens/order_products.dart';
 import 'package:intl/intl.dart';
 
 class OrdersList extends StatelessWidget {
@@ -23,8 +24,8 @@ class OrdersList extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(
-            child: Column(
+          return const Center(
+            child:  Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.shopping_bag_outlined, size: 64, color: Colors.grey),
@@ -51,7 +52,12 @@ class OrdersList extends StatelessWidget {
                 }
 
                 var orderDetails = snapshot.data!;
-                return OrderCard(orderData: orderDetails);
+                return GestureDetector(
+                  child: OrderCard(orderData: orderDetails),
+                  onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=> OrderProductsScreen(orderId: orderDetails['orderId'])));
+                  },
+                  );
               },
             );
           },
@@ -96,11 +102,11 @@ class OrderCard extends StatelessWidget {
     var formattedDate = DateFormat('MMM d, yyyy').format(orderDate);
 
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin:const  EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -135,17 +141,17 @@ class OrderCard extends StatelessWidget {
                       // SizedBox(height: 4),
                       // Text('Quantity: ${orderData['quantity']}',
                       //     style: TextStyle(color: Colors.grey)),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text('Total: \$${orderData['totalPrice'].toStringAsFixed(2)}',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 8),
+           const  SizedBox(height: 8),
             Text('Ordered by: ${orderData['userName']}', 
-                 style: TextStyle(color: Colors.grey)),
+                 style:const  TextStyle(color: Colors.grey)),
           ],
         ),
       ),
