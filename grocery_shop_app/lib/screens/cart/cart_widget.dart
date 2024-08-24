@@ -69,7 +69,6 @@ class _CartWidgetState extends State<CartWidget> {
                 ),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
                   children: [
                     Container(
                       height: size.width * 0.25,
@@ -122,6 +121,7 @@ class _CartWidgetState extends State<CartWidget> {
                                   flex: 2,
                                   child: TextField(
                                     controller: _quantityTextController,
+                                    style: TextStyle(color:color),
                                     keyboardType: TextInputType.number,
                                     maxLines: 1,
                                     decoration: const InputDecoration(

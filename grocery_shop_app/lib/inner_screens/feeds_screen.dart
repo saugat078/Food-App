@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:grocery_shop_app/consts/constss.dart';
 import 'package:grocery_shop_app/models/products_model.dart';
 import 'package:grocery_shop_app/providers/products_provider.dart';
 import 'package:grocery_shop_app/widgets/back_widget.dart';
 import 'package:grocery_shop_app/widgets/empty_products_widget.dart';
 import 'package:provider/provider.dart';
-
 import '../services/utils.dart';
 import '../widgets/feed_items.dart';
 import '../widgets/text_widget.dart';
@@ -29,13 +26,12 @@ class _FeedsScreenState extends State<FeedsScreen> {
     _searchTextFocusNode.dispose();
     super.dispose();
   }
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   final productsProvider = Provider.of<ProductsProvider>(context, listen: false);
-  //   productsProvider.fetchProducts();
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    final productsProvider = Provider.of<ProductsProvider>(context, listen: false);
+    productsProvider.fetchProducts();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

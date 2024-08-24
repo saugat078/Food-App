@@ -35,8 +35,8 @@ class CategoriesScreen extends StatelessWidget {
           ),
           bottom: TabBar(
             tabs: [
-              Tab(text: 'Restaurants'),
-              Tab(text: 'Liquor'),
+              Tab(child: TextWidget(text: 'Restaurants',color:utils.color,textSize: 14,)),
+              Tab(child: TextWidget(text: 'Liquors',color:utils.color,textSize: 14,)),
             ],
           ),
         ),

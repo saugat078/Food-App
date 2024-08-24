@@ -197,6 +197,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                             flex: 1,
                             child: TextField(
                               controller: _quantityTextController,
+                              style: TextStyle(color:color),
                               key: const ValueKey('quantity'),
                               keyboardType: TextInputType.number,
                               maxLines: 1,
