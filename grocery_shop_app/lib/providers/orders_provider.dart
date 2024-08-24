@@ -10,6 +10,7 @@ class OrdersProvider with ChangeNotifier{
     return _orders;
   }
    Future<void> fetchOrders() async {
+    print("fetching the order function called--------------");
     try {
       User? user = authInstance.currentUser;
     await FirebaseFirestore.instance
@@ -25,11 +26,12 @@ class OrdersProvider with ChangeNotifier{
           OrderModel(
             orderId: element.get('orderId'),
             userId: element.get('userId'),
-            productId: element.get('productId'),
+            products:element.get('products'),
+            // productId: element.get('productId'),
             userName: element.get('userName'),
-            price: element.get('price').toString(),
-            imageUrl: element.get('imageUrl'),
-            quantity: element.get('quantity').toString(),
+            totalPrice: element.get('totalPrice').toString(),
+            // imageUrl: element.get('imageUrl'),
+            // quantity: element.get('quantity').toString(),
             orderDate: element.get('orderDate'),
           ),
         );

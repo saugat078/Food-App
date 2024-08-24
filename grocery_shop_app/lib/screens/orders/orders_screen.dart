@@ -33,24 +33,50 @@ class _OrderWidgetState extends State<OrderWidget> {
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
     final productProvider = Provider.of<ProductsProvider>(context);
-    final getCurrProduct = productProvider.findProById(ordersModel.productId);
-    return ListTile(
-      subtitle:
-          Text('Paid: \Rs.${double.parse(ordersModel.price).toStringAsFixed(2)}'),
-      onTap: () {
-        // GlobalMethods.navigateTo(
-        //     ctx: context, routeName: ProductDetails.routeName);
-      },
-      leading: FancyShimmerImage(
-        width: size.width * 0.2,
-        imageUrl: getCurrProduct.imageUrl,
-        boxFit: BoxFit.fill,
-      ),
-      title: TextWidget(
-          text: '${getCurrProduct.title}  x${ordersModel.quantity}',
-          color: color,
-          textSize: 18),
-      trailing: TextWidget(text: orderDateToShow, color: color, textSize: 18),
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Order Date: $orderDateToShow',
+          style: TextStyle(fontSize: 18, color: color),
+        ),
+        SizedBox(height: 10),
+        ListView.builder(
+          
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: ordersModel.products.length,
+          itemBuilder: (ctx, index) {
+            final product = ordersModel.products[index];
+            print('product,$product');
+            final getCurrProduct = productProvider.findProById(product['productId']);  
+            print('abab,$getCurrProduct');
+            return ListTile(
+              leading: FancyShimmerImage(
+                width: size.width * 0.2,
+                imageUrl: getCurrProduct.imageUrl,
+                boxFit: BoxFit.fill,
+              ),
+              title: TextWidget(
+                text: '${getCurrProduct.title}  x${product['quantity']}',
+                color: color,
+                textSize: 18,
+              ),
+              subtitle: Text('Price: \Rs.${product['price'].toStringAsFixed(2)}'),
+              onTap: () {
+                GlobalMethods.navigateTo(
+                    ctx: context, routeName: ProductDetails.routeName);
+              },
+            );
+          },
+        ),
+        SizedBox(height: 10),
+        Text(
+          'Total To Be Paid: \Rs.${double.parse(ordersModel.totalPrice).toStringAsFixed(2)}',
+          style: TextStyle(fontSize: 18, color: color),
+        ),
+      ],
     );
   }
 }
