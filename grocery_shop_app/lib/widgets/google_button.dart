@@ -11,36 +11,23 @@ class GoogleButton extends StatelessWidget {
 
   Future<void> _googleSignIn(BuildContext context) async {
     try {
-      print("Starting Google Sign-In process");
-      
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
-        print("Google Sign-In canceled by user");
+        // User canceled the sign-in process
         return;
       }
 
-      print("Google Sign-In successful. User: ${googleUser.email}");
-
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      print("Got Google Auth. Access Token: ${googleAuth.accessToken != null}, ID Token: ${googleAuth.idToken != null}");
-
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      print("Created Firebase credential. Attempting to sign in to Firebase");
-
       final UserCredential authResult = await FirebaseAuth.instance.signInWithCredential(credential);
       final User? user = authResult.user;
 
       if (user != null) {
-        print("Firebase sign-in successful. User ID: ${user.uid}");
-
         if (authResult.additionalUserInfo!.isNewUser) {
-          print("New user. Creating Firestore document");
           await FirebaseFirestore.instance
               .collection('users')
               .doc(user.uid)
@@ -53,26 +40,17 @@ class GoogleButton extends StatelessWidget {
             'userCart': [],
             'createdAt': Timestamp.now(),
           });
-          print("Firestore document created successfully");
-        } else {
-          print("Existing user. Skipping Firestore document creation");
         }
 
-        print("Navigating to FetchScreen");
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const FetchScreen(),
           ),
         );
-      } else {
-        print("Firebase sign-in failed. User is null");
-        GlobalMethods.errorDialog(subtitle: 'Failed to sign in with Google', context: context);
       }
     } on FirebaseAuthException catch (e) {
-      print("FirebaseAuthException: ${e.code} - ${e.message}");
       GlobalMethods.errorDialog(subtitle: e.message ?? 'An error occurred', context: context);
     } catch (e) {
-      print("Unexpected error: $e");
       GlobalMethods.errorDialog(subtitle: e.toString(), context: context);
     }
   }
