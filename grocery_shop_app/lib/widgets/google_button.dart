@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grocery_shop_app/fetch_screen.dart';
+import 'package:grocery_shop_app/screens/auth/phone.dart';
 import 'package:grocery_shop_app/services/global_methods.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
 
@@ -13,7 +14,6 @@ class GoogleButton extends StatelessWidget {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
-        // User canceled the sign-in process
         return;
       }
 
@@ -27,26 +27,32 @@ class GoogleButton extends StatelessWidget {
       final User? user = authResult.user;
 
       if (user != null) {
-        if (authResult.additionalUserInfo!.isNewUser) {
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .set({
-            'id': user.uid,
-            'name': user.displayName,
+        final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+
+        if (!userDoc.exists) {
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
             'email': user.email,
+            'name': user.displayName,
+            'phone': '',
+            'id': user.uid,
             'shipping-address': '',
             'userWish': [],
             'userCart': [],
             'createdAt': Timestamp.now(),
           });
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => PhoneVerificationScreen(user: user),
+            ),
+          );
+        } else {
+          // User already exists, navigate to fetch screen
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const FetchScreen(),
+            ),
+          );
         }
-
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const FetchScreen(),
-          ),
-        );
       }
     } on FirebaseAuthException catch (e) {
       GlobalMethods.errorDialog(subtitle: e.message ?? 'An error occurred', context: context);
