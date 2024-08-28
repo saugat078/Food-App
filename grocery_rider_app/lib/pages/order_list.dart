@@ -1,89 +1,70 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'orderProductScreen.dart';
 import 'package:intl/intl.dart';
-import 'package:maps_launcher/maps_launcher.dart';
 
-class OrderListPage extends StatelessWidget {
-  String formatTimestamp(dynamic timestamp) {
-    if (timestamp is Timestamp) {
-      return DateFormat('yyyy-MM-dd HH:mm').format(timestamp.toDate());
-    } else if (timestamp is String) {
-      return timestamp;
-    }
-    return 'Unknown';
-  }
-
-  Future<List<OrderWithProductData>> _fetchOrdersWithProductData() async {
-    QuerySnapshot orderSnapshot =
-        await FirebaseFirestore.instance.collection('orders').get();
-
-    List<OrderWithProductData> ordersWithProductData = [];
-
-    for (var doc in orderSnapshot.docs) {
-      Map<String, dynamic> orderData = doc.data() as Map<String, dynamic>;
-      String productId = orderData['productId'] as String? ?? '';
-      print(productId);
-
-      if (productId.isNotEmpty) {
-        DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
-            .collection('products')
-            .doc(productId)
-            .get();
-
-        Map<String, dynamic>? productData =
-            productSnapshot.data() as Map<String, dynamic>?;
-
-        print(productData.toString());
-        ordersWithProductData.add(OrderWithProductData(
-          orderData: orderData,
-          productData: productData,
-        ));
-      } else {
-        ordersWithProductData.add(OrderWithProductData(
-          orderData: orderData,
-          productData: null,
-        ));
-      }
-    }
-
-    return ordersWithProductData;
-  }
+class OrdersList extends StatelessWidget {
+  const OrdersList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Orders'),
+        title: const Text('Orders'),
+        centerTitle: true,
+        backgroundColor: Colors.teal,
       ),
-      body: FutureBuilder<List<OrderWithProductData>>(
-        future: _fetchOrdersWithProductData(),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('orders')
+            .orderBy('orderDate', descending: true)
+            .snapshots(),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.shopping_bag_outlined, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text('No orders found', style: TextStyle(fontSize: 18)),
+                ],
+              ),
+            );
           }
 
-          List<OrderWithProductData> ordersWithProductData = snapshot.data ?? [];
-
           return ListView.builder(
-            padding: EdgeInsets.all(16),
-            itemCount: ordersWithProductData.length,
+            itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              OrderWithProductData orderWithProductData =
-                  ordersWithProductData[index];
-              Map<String, dynamic> orderData = orderWithProductData.orderData;
-              Map<String, dynamic>? productData = orderWithProductData.productData;
+              var order = snapshot.data!.docs[index];
+              return FutureBuilder<Map<String, dynamic>>(
+                future: fetchOrderDetails(order),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-              return OrderCard(
-                imageUrl: productData?['imageUrl'] as String? ?? '',
-                personName: orderData['userName'] as String? ?? 'Unknown',
-                restaurantName: productData?['productCategoryName'] as String? ?? 'Unknown',
-                orderDate: formatTimestamp(orderData['orderDate']),
-                price: (orderData['price'] as num?)?.toStringAsFixed(2) ?? 'Unknown',
+                  if (snapshot.hasError || !snapshot.hasData) {
+                    return const Center(child: Text('Error fetching details'));
+                  }
+
+                  var orderDetails = snapshot.data!;
+                  return GestureDetector(
+                    child: OrderCard(orderData: orderDetails),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => OrderProductScreen(orderId: orderDetails['orderId'])));
+                    },
+                  );
+                },
               );
             },
           );
@@ -91,99 +72,72 @@ class OrderListPage extends StatelessWidget {
       ),
     );
   }
+
+  Future<Map<String, dynamic>> fetchOrderDetails(QueryDocumentSnapshot order) async {
+    var orderData = order.data() as Map<String, dynamic>;
+
+    var userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(orderData['userId'])
+        .get();
+    var userName = userSnapshot.data()?['name'] ?? 'Unknown User';
+
+    orderData['userName'] = userName;
+
+    return orderData;
+  }
 }
 
 class OrderCard extends StatelessWidget {
-  final String imageUrl;
-  final String personName;
-  final String restaurantName;
-  final String orderDate;
-  final String price;
+  final Map<String, dynamic> orderData;
 
-  const OrderCard({
-    Key? key,
-    required this.imageUrl,
-    required this.personName,
-    required this.restaurantName,
-    required this.orderDate,
-    required this.price,
-  }) : super(key: key);
+  const OrderCard({Key? key, required this.orderData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var orderDate = (orderData['orderDate'] as Timestamp).toDate();
+    var formattedDate = DateFormat('MMM d, yyyy').format(orderDate);
+
     return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.teal.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.shopping_bag, color: Colors.teal, size: 30),
+        ),
+        title: Text(
+          'Order #${orderData['orderId'].substring(0, 8)}',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (imageUrl.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                ),
-              )
-            else
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.image_not_supported, color: Colors.grey[600]),
-              ),
-            SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    personName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(restaurantName),
-                  Text(orderDate),
-                  Text('\Rs.${price}'),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                MapsLauncher.launchCoordinates(
-                    26.629307, 87.982475, 'Delivery Point is here');
-           
-              },
-              child: Text('Open Map'),
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
+            const SizedBox(height: 8),
+            Text('Total: \Rs. ${orderData['totalPrice'].toStringAsFixed(2)}',
+                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.teal)),
+            const SizedBox(height: 4),
+            Text('Ordered by: ${orderData['userName']}', 
+                 style: const TextStyle(color: Colors.grey)),
+          ],
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(formattedDate,
+                style: const TextStyle(color: Colors.grey, fontSize: 14)),
+            const SizedBox(height: 4),
+            const Icon(Icons.chevron_right, color: Colors.grey),
           ],
         ),
       ),
     );
   }
-}
-
-class OrderWithProductData {
-  final Map<String, dynamic> orderData;
-  final Map<String, dynamic>? productData;
-
-  OrderWithProductData({required this.orderData, this.productData});
 }
