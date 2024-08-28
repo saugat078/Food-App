@@ -52,7 +52,7 @@ class _FetchScreenState extends State<FetchScreen> {
       body: Stack(
         children: [
           Image.asset(
-            'assets/images/landing/buyfood.jpg',
+            'assets/images/landing/BhojLogo.png',
             fit: BoxFit.cover,
             height: double.infinity,
           ),

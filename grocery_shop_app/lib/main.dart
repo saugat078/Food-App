@@ -6,6 +6,7 @@ import 'package:grocery_shop_app/inner_screens/cat_screen.dart';
 import 'package:grocery_shop_app/inner_screens/feeds_screen.dart';
 import 'package:grocery_shop_app/inner_screens/on_sale_screen.dart';
 import 'package:grocery_shop_app/inner_screens/product_details.dart';
+import 'package:grocery_shop_app/inner_screens/splashScreen.dart';
 import 'package:grocery_shop_app/provider/dark_theme_provider.dart';
 import 'package:grocery_shop_app/providers/cart_provider.dart';
 import 'package:grocery_shop_app/providers/orders_provider.dart';
@@ -102,7 +103,7 @@ class _MyAppState extends State<MyApp> {
                   debugShowCheckedModeBanner: false,
                   title: 'Grocery Shop App',
                   theme: Styles.themeData(themeProvider.getDarkTheme, context),
-                  home: const FetchScreen(),
+                  home: SplashScreen(),
                   routes: {
                     OnSaleScreen.routeName: (ctx) => const OnSaleScreen(),
                     FeedsScreen.routeName: (ctx) => const FeedsScreen(),
