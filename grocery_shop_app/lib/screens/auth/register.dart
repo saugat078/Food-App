@@ -8,7 +8,6 @@ import 'package:grocery_shop_app/consts/constss.dart';
 import 'package:grocery_shop_app/consts/firebase_const.dart';
 import 'package:grocery_shop_app/fetch_screen.dart';
 import 'package:grocery_shop_app/screens/auth/login.dart';
-import 'package:grocery_shop_app/screens/btm_bar.dart';
 import 'package:grocery_shop_app/screens/loading_manager.dart';
 import '../../services/global_methods.dart';
 import '../../services/utils.dart';

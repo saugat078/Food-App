@@ -5,8 +5,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_shop_app/consts/firebase_const.dart';
+import 'package:grocery_shop_app/screens/auth/changePhone.dart';
 import 'package:grocery_shop_app/screens/auth/forget_pass.dart';
 import 'package:grocery_shop_app/screens/auth/login.dart';
+import 'package:grocery_shop_app/screens/auth/phone.dart';
 import 'package:grocery_shop_app/screens/btm_bar.dart';
 import 'package:grocery_shop_app/screens/loading_manager.dart';
 import 'package:grocery_shop_app/screens/orders/orders_screen.dart';
@@ -46,6 +48,7 @@ class _UserScreenState extends State<UserScreen> {
   String? _email;
   String? _name;
   String? _address;
+  String? _phone;
 
   bool _isLoading = false;
   final User? user = authInstance.currentUser;
@@ -69,6 +72,7 @@ class _UserScreenState extends State<UserScreen> {
         _email = userDoc.get('email');
         _name = userDoc.get('name');
         _address = userDoc.get('shipping-address');
+        _phone=userDoc.get('phone');
         _addressTextController.text = userDoc.get('shipping-address');
       }
     } catch (error) {
@@ -148,6 +152,19 @@ class _UserScreenState extends State<UserScreen> {
                   icon: IconlyLight.profile,
                   onPressed: () async {
                     await _showAddressDialog();
+                  },
+                  color: color,
+                ),
+                _listTiles(
+                  title: _phone ?? 'Phone Number',
+                  subtitle: 'Change Phone Number',
+                  icon: IconlyLight.call,
+                  onPressed: ()  {
+                     Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => changePhoneScreen(user:FirebaseAuth.instance.currentUser!), 
+        ),
+      );
                   },
                   color: color,
                 ),
