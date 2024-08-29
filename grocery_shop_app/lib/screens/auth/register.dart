@@ -8,6 +8,7 @@ import 'package:grocery_shop_app/consts/constss.dart';
 import 'package:grocery_shop_app/consts/firebase_const.dart';
 import 'package:grocery_shop_app/fetch_screen.dart';
 import 'package:grocery_shop_app/screens/auth/login.dart';
+import 'package:grocery_shop_app/screens/auth/phone.dart';
 import 'package:grocery_shop_app/screens/loading_manager.dart';
 import '../../services/global_methods.dart';
 import '../../services/utils.dart';
@@ -82,7 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         print('Firestore document created successfully');
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const FetchScreen(),
+            builder: (context) => PhoneVerificationScreen(user:FirebaseAuth.instance.currentUser!),
           ),
         );
         print('Succefully registered');

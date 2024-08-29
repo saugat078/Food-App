@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             AspectRatio(
-              aspectRatio: 16 / 9,
+              aspectRatio: 14 / 9,
               child: Swiper(
                 itemBuilder: (BuildContext context, int index) {
                   return _offerImages.isEmpty

@@ -9,10 +9,10 @@ import 'package:grocery_shop_app/providers/cart_provider.dart';
 import 'package:grocery_shop_app/providers/products_provider.dart';
 import 'package:grocery_shop_app/providers/viewed_prod_provider.dart';
 import 'package:grocery_shop_app/providers/wishlist_provider.dart';
+import 'package:grocery_shop_app/screens/cart/cart_screen.dart';
 import 'package:grocery_shop_app/services/global_methods.dart';
 import 'package:grocery_shop_app/widgets/heart_btn.dart';
 import 'package:provider/provider.dart';
-
 import '../services/utils.dart';
 import '../widgets/text_widget.dart';
 
@@ -293,29 +293,31 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 color: Colors.green,
                                 borderRadius: BorderRadius.circular(10),
                                 child: InkWell(
-                                  onTap: () async {
-                                    final User? user = authInstance.currentUser;
-                                    if (user == null) {
-                                      GlobalMethods.errorDialog(
-                                          subtitle:
-                                              'No user found, Please login first!',
-                                          context: context);
-                                      return;
-                                    }
-                                    if (_isInCart) {
-                                      return;
-                                    }
-                                    await GlobalMethods.addToCart(
-                                        productId: getCurrentProduct.id,
-                                        quantity:
-                                            int.parse(_quantityTextController.text),
-                                        context: context);
-                                        await cartProvider.fetchCart();
-                                    // cartProvider.addProductsToCart(
-                                    //     productId: getCurrentProduct.id,
-                                    //     quantity: int.parse(
-                                    //         _quantityTextController.text));
-                                  },
+                                 onTap: () async {
+  final User? user = authInstance.currentUser;
+  if (user == null) {
+    GlobalMethods.errorDialog(
+      subtitle: 'No user found, Please login first!',
+      context: context,
+    );
+    return;
+  }
+  if (_isInCart) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => CartScreen(),
+    ));
+    return;
+  }
+  await GlobalMethods.addToCart(
+    productId: getCurrentProduct.id,
+    quantity: int.parse(_quantityTextController.text),
+    context: context,
+  );
+  await cartProvider.fetchCart();
+  Navigator.of(context).push(MaterialPageRoute(
+    builder: (context) => CartScreen(),
+  ));
+},
                                   borderRadius: BorderRadius.circular(10),
                                   child: Padding(
                                       padding: const EdgeInsets.all(12.0),

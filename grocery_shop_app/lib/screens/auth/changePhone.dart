@@ -59,14 +59,15 @@ class _changePhoneScreenState extends State<changePhoneScreen> {
   }
 }
   void _sendOTP() async {
-    setState(() {
-      _isLoading = true;
-    });
+    // setState(() {
+    //   _isLoading = true;
+    // });
 
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: _phoneController.text.trim(),
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await _linkPhoneCredential(credential);
+      verificationCompleted: (PhoneAuthCredential credential) {
+        // await _linkPhoneCredential(credential);
+        print("----------------------------verificationCompleted");
       },
       verificationFailed: (FirebaseAuthException e) {
         GlobalMethods.errorDialog(subtitle: e.message ?? 'An error occurred', context: context);

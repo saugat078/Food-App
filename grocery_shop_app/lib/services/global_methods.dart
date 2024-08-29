@@ -105,43 +105,44 @@ class GlobalMethods {
         });
   }
   static Future<void> successDialog({
-  required String subtitle,
-  required BuildContext context,
-}) async {
-  await showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Row(children: [
-          Icon(
-            Icons.check_circle,
-            color: Colors.green,
-            size: 24,
-          ),
-          const SizedBox(
-            width: 8,
-          ),
-          Text('Successfull'),
-        ]),
-        content: Text(subtitle),
-        actions: [
-          TextButton(
-            onPressed: () {
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              }
-            },
-            child: TextWidget(
-              color: Colors.green,
-              text: 'Ok',
-              textSize: 18,
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
+    required String subtitle,
+    required BuildContext context,
+  }) async {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Row(children: [
+              Image.asset(
+                'assets/images/tick.png',
+                height: 30,
+                width: 30,
+                fit: BoxFit.fill,
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              const Text('Successful'),
+            ]),
+            content: Text(subtitle),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: TextWidget(
+                  color: Colors.cyan,
+                  text: 'Ok',
+                  textSize: 18,
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
 
 
   static Future<void> addToCart(

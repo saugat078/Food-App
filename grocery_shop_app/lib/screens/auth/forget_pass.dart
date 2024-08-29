@@ -1,10 +1,9 @@
 import 'package:card_swiper/card_swiper.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocery_shop_app/consts/constss.dart';
 import 'package:grocery_shop_app/consts/firebase_const.dart';
+import 'package:grocery_shop_app/screens/auth/login.dart';
 import 'package:grocery_shop_app/screens/loading_manager.dart';
 import 'package:grocery_shop_app/services/global_methods.dart';
 import 'package:grocery_shop_app/services/utils.dart';
@@ -32,44 +31,54 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
   bool _isLoading = false;
   void _forgetPassFCT() async {
-    if (_emailTextController.text.isEmpty ||
-        !_emailTextController.text.contains("@")) {
+  final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  final currentEmail = userDoc.data()?['email'];
+  print(currentEmail);
+
+  if (_emailTextController.text.isEmpty || !_emailTextController.text.contains("@")) {
+    GlobalMethods.errorDialog(
+      subtitle: 'Please enter a correct email address',
+      context: context,
+    );
+  } else if (currentEmail != _emailTextController.text) {
+    GlobalMethods.errorDialog(
+      subtitle: 'The email address does not match the one in the records.\nPlease use the email you used to sign in first.',
+      context: context,
+    );
+  } else {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await authInstance.sendPasswordResetEmail(email: _emailTextController.text.toLowerCase());
+      GlobalMethods.successDialog(
+        subtitle: "An email has been sent to your email address",
+        context: context,
+      );
+      await Future.delayed(Duration(seconds: 4)); 
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      );
+    } on FirebaseException catch (error) {
       GlobalMethods.errorDialog(
-          subtitle: 'Please enter a correct email address', context: context);
-    } else {
+        subtitle: '${error.message}', 
+        context: context,
+      );
+    } catch (error) {
+      GlobalMethods.errorDialog(
+        subtitle: '$error', 
+        context: context,
+      );
+    } finally {
       setState(() {
-        _isLoading = true;
+        _isLoading = false;
       });
-      try {
-        await authInstance.sendPasswordResetEmail(
-            email: _emailTextController.text.toLowerCase());
-        Fluttertoast.showToast(
-          msg: "An email has been sent to your email address",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 10,
-          backgroundColor: Colors.grey.shade600,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      } on FirebaseException catch (error) {
-        GlobalMethods.errorDialog(
-            subtitle: '${error.message}', context: context);
-        setState(() {
-          _isLoading = false;
-        });
-      } catch (error) {
-        GlobalMethods.errorDialog(subtitle: '$error', context: context);
-        setState(() {
-          _isLoading = false;
-        });
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
