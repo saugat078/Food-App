@@ -4,14 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_shop_app/consts/constss.dart';
 import 'package:grocery_shop_app/fetch_screen.dart';
+import 'package:grocery_shop_app/screens/auth/login.dart';
 import 'package:grocery_shop_app/screens/loading_manager.dart';
-import 'package:grocery_shop_app/screens/user.dart';
 import 'package:grocery_shop_app/services/global_methods.dart';
 import 'package:grocery_shop_app/services/utils.dart';
 import 'package:grocery_shop_app/widgets/auth_button.dart';
 import 'package:grocery_shop_app/widgets/back_widget.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
-import 'package:win32/win32.dart';
 class changePhoneScreen extends StatefulWidget {
   final User? user;
 
@@ -157,25 +156,19 @@ class _changePhoneScreenState extends State<changePhoneScreen> {
 
  @override
 Widget build(BuildContext context) {
-  // Check if the user is null
   if (widget.user == null) {
-    // Delay the navigation and error dialog display until the next frame
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // Display the error dialog
       await GlobalMethods.errorDialog(
         context: context,
         subtitle: 'You need to login first..',
       );
 
-      // Navigate to the UserScreen after the dialog is dismissed
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const UserScreen(),
+          builder: (context) => const LoginScreen(),
         ),
       );
     });
-
-    // Return an empty container while the above actions complete
     return Container();
   }
 
