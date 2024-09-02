@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_shop_app/fetch_screen.dart';
@@ -13,10 +14,12 @@ import 'package:grocery_shop_app/providers/orders_provider.dart';
 import 'package:grocery_shop_app/providers/products_provider.dart';
 import 'package:grocery_shop_app/providers/viewed_prod_provider.dart';
 import 'package:grocery_shop_app/providers/wishlist_provider.dart';
+import 'package:grocery_shop_app/screens/auth/changePhone.dart';
 import 'package:grocery_shop_app/screens/auth/forget_pass.dart';
 import 'package:grocery_shop_app/screens/auth/login.dart';
 import 'package:grocery_shop_app/screens/auth/register.dart';
 import 'package:grocery_shop_app/screens/orders/orders_widget.dart';
+import 'package:grocery_shop_app/screens/ratings/rating.dart';
 import 'package:grocery_shop_app/screens/viewed_recently/viewed_recently.dart';
 import 'package:grocery_shop_app/screens/wishlist/wishlist_screen.dart';
 import 'package:provider/provider.dart';
@@ -117,6 +120,8 @@ class _MyAppState extends State<MyApp> {
                     ForgetPasswordScreen.routeName: (ctx) =>
                         const ForgetPasswordScreen(),
                     CategoryScreen.routeName: (ctx) => const CategoryScreen(),
+                    RatingScreen.routeName: (ctx) => RatingScreen(restaurantId: '04c0ad9f-2b68-46c4-adb1-c20654e34997',),
+                    changePhoneScreen.routeName: (ctx) => changePhoneScreen(user:FirebaseAuth.instance.currentUser),
                   });
             }),
           );

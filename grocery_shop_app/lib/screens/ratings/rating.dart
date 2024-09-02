@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:grocery_shop_app/widgets/ratingWidget.dart';
 
 class RatingScreen extends StatefulWidget {
+  static const routeName = '/ratingScreen';
+
   final String restaurantId;
 
   RatingScreen({Key? key, required this.restaurantId}) : super(key: key);
@@ -16,7 +18,7 @@ class _RatingScreenState extends State<RatingScreen> {
   final _commentController = TextEditingController();
 
   Future<void> _submitRating() async {
-    final userId = "user123"; // Replace with current user's ID
+    final userId = "user123"; 
     await FirebaseFirestore.instance
         .collection('resturants')
         .doc(widget.restaurantId)
@@ -27,12 +29,12 @@ class _RatingScreenState extends State<RatingScreen> {
         });
 
     await _updateAverageRating();
-    Navigator.pop(context); // Go back to the previous screen
+    Navigator.pop(context); 
   }
 
   Future<void> _updateAverageRating() async {
     final ratingsSnapshot = await FirebaseFirestore.instance
-        .collection('restaurants')
+        .collection('resturants')
         .doc(widget.restaurantId)
         .collection('ratings')
         .get();

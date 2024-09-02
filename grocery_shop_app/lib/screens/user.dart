@@ -13,6 +13,7 @@ import 'package:grocery_shop_app/screens/btm_bar.dart';
 import 'package:grocery_shop_app/screens/loading_manager.dart';
 import 'package:grocery_shop_app/screens/orders/orders_screen.dart';
 import 'package:grocery_shop_app/screens/orders/orders_widget.dart';
+import 'package:grocery_shop_app/screens/ratings/rating.dart';
 import 'package:grocery_shop_app/screens/viewed_recently/viewed_recently.dart';
 import 'package:grocery_shop_app/screens/wishlist/wishlist_screen.dart';
 import 'package:grocery_shop_app/services/global_methods.dart';
@@ -160,11 +161,7 @@ class _UserScreenState extends State<UserScreen> {
                   subtitle: 'Change Phone Number',
                   icon: IconlyLight.call,
                   onPressed: ()  {
-                     Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => changePhoneScreen(user:FirebaseAuth.instance.currentUser), 
-        ),
-      );
+                    GlobalMethods.navigateTo(ctx:context, routeName:changePhoneScreen.routeName);
                   },
                   color: color,
                 ),
@@ -203,6 +200,16 @@ class _UserScreenState extends State<UserScreen> {
                     GlobalMethods.navigateTo(
                         ctx: context,
                         routeName: ForgetPasswordScreen.routeName);
+                  },
+                  color: color,
+                ),
+                _listTiles(
+                  title: 'Rating',
+                  icon: IconlyLight.delete,
+                  onPressed: () {
+                    GlobalMethods.navigateTo(
+                        ctx: context,
+                        routeName: RatingScreen.routeName);
                   },
                   color: color,
                 ),

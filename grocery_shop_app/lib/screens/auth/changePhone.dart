@@ -12,6 +12,7 @@ import 'package:grocery_shop_app/widgets/auth_button.dart';
 import 'package:grocery_shop_app/widgets/back_widget.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
 class changePhoneScreen extends StatefulWidget {
+  static const routeName='/changePhone';
   final User? user;
 
   const changePhoneScreen({Key? key, required this.user}) : super(key: key);
@@ -162,12 +163,7 @@ Widget build(BuildContext context) {
         context: context,
         subtitle: 'You need to login first..',
       );
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-        ),
-      );
+      Navigator.pop(context);
     });
     return Container();
   }
