@@ -160,9 +160,9 @@ class _UserScreenState extends State<UserScreen> {
                   subtitle: 'Change Phone Number',
                   icon: IconlyLight.call,
                   onPressed: ()  {
-                     Navigator.of(context).pushReplacement(
+                     Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => changePhoneScreen(user:FirebaseAuth.instance.currentUser!), 
+          builder: (context) => changePhoneScreen(user:FirebaseAuth.instance.currentUser), 
         ),
       );
                   },

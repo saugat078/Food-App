@@ -4,7 +4,6 @@ import 'package:grocery_shop_app/inner_screens/product_details.dart';
 import 'package:grocery_shop_app/models/order_model.dart';
 import 'package:grocery_shop_app/services/global_methods.dart';
 import 'package:provider/provider.dart';
-
 import '../../providers/products_provider.dart';
 import '../../services/utils.dart';
 import '../../widgets/text_widget.dart';
@@ -18,6 +17,7 @@ class OrderWidget extends StatefulWidget {
 
 class _OrderWidgetState extends State<OrderWidget> {
   late String orderDateToShow;
+  bool isDelivered = false;
 
   @override
   void didChangeDependencies() {
@@ -37,21 +37,45 @@ class _OrderWidgetState extends State<OrderWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Order Date: $orderDateToShow',
-          style: TextStyle(fontSize: 18, color: color),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Order Date: $orderDateToShow',
+              style: TextStyle(fontSize: 18, color: color),
+            ),
+            Flexible(
+              child: Material(
+                color: isDelivered ? Colors.green : Colors.orange,
+                borderRadius: BorderRadius.circular(10),
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      isDelivered = !isDelivered;
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(10),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    child: TextWidget(
+                      text: isDelivered ? 'Delivered' : 'Ordered',
+                      color: Colors.white,
+                      textSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         SizedBox(height: 10),
         ListView.builder(
-          
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemCount: ordersModel.products.length,
           itemBuilder: (ctx, index) {
             final product = ordersModel.products[index];
-            print('product,$product');
-            final getCurrProduct = productProvider.findProById(product['productId']);  
-            print('abab,$getCurrProduct');
+            final getCurrProduct = productProvider.findProById(product['productId']);
             return ListTile(
               leading: FancyShimmerImage(
                 width: size.width * 0.2,

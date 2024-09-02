@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:grocery_shop_app/consts/constss.dart';
 import 'package:grocery_shop_app/fetch_screen.dart';
 import 'package:grocery_shop_app/screens/loading_manager.dart';
+import 'package:grocery_shop_app/screens/user.dart';
 import 'package:grocery_shop_app/services/global_methods.dart';
 import 'package:grocery_shop_app/services/utils.dart';
 import 'package:grocery_shop_app/widgets/auth_button.dart';
 import 'package:grocery_shop_app/widgets/back_widget.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
+import 'package:win32/win32.dart';
 class changePhoneScreen extends StatefulWidget {
-  final User user;
+  final User? user;
 
   const changePhoneScreen({Key? key, required this.user}) : super(key: key);
 
@@ -33,35 +35,53 @@ class _changePhoneScreenState extends State<changePhoneScreen> {
   }
 
   Future<void> _checkAndSendOTP() async {
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final newPhoneNumber = _phoneController.text.trim();
-    print(newPhoneNumber);
-    final userDoc = await FirebaseFirestore.instance.collection('users').doc(widget.user.uid).get();
-    final currentPhoneNumber = userDoc.data()?['phone'];
-    print(currentPhoneNumber);
-
-    if (currentPhoneNumber == newPhoneNumber) {
-      // Check if the phone number is the same as the current one
-      GlobalMethods.errorDialog(context: context, subtitle: 'This phone number is already in use.');
-    } else {
-        _sendOTP();
-    }
-  } catch (e) {
-    GlobalMethods.errorDialog(subtitle: 'Error checking phone number: ${e.toString()}', context: context);
-  } finally {
     setState(() {
-      _isLoading = false;
+      _isLoading = true;
     });
+
+    try {
+      final newPhoneNumber = _phoneController.text.trim();
+      print(newPhoneNumber);
+
+      if (widget.user == null) {
+        GlobalMethods.errorDialog(
+          context: context,
+          subtitle: 'No user found. Please log in first.',
+        );
+      } else {
+        final userDoc = await FirebaseFirestore.instance.collection('users').doc(widget.user!.uid).get();
+        final currentPhoneNumber = userDoc.data()?['phone'];
+        print(currentPhoneNumber);
+
+        if (currentPhoneNumber == null) {
+          GlobalMethods.errorDialog(
+            context: context,
+            subtitle: 'No phone number found. Please log in first.',
+          );
+        } else if (currentPhoneNumber == newPhoneNumber) {
+          GlobalMethods.errorDialog(
+            context: context,
+            subtitle: 'This phone number is already in use.',
+          );
+        } else {
+          _sendOTP();
+        }
+      }
+    } catch (e) {
+      GlobalMethods.errorDialog(
+        subtitle: 'Error checking phone number: ${e.toString()}',
+        context: context,
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
-}
   void _sendOTP() async {
-    // setState(() {
-    //   _isLoading = true;
-    // });
+    setState(() {
+      _isLoading = true;
+    });
 
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: _phoneController.text.trim(),
@@ -112,7 +132,7 @@ class _changePhoneScreenState extends State<changePhoneScreen> {
 
   Future<void> _linkPhoneCredential(PhoneAuthCredential credential) async {
     try {
-      await widget.user.linkWithCredential(credential);
+      await widget.user!.linkWithCredential(credential);
       await _updatePhoneNumber();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -126,7 +146,7 @@ class _changePhoneScreenState extends State<changePhoneScreen> {
 
   Future<void> _updatePhoneNumber() async {
     try {
-      await FirebaseFirestore.instance.collection('users').doc(widget.user.uid).update({
+      await FirebaseFirestore.instance.collection('users').doc(widget.user!.uid).update({
         'phone': _phoneController.text.trim(),
       });
       GlobalMethods.successDialog(context: context, subtitle: 'Phone number updated successfully');
@@ -135,46 +155,88 @@ class _changePhoneScreenState extends State<changePhoneScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    Size size = Utils(context).getScreenSize;
-    return Scaffold(
-      body: LoadingManager(
-        isLoading: _isLoading,
-        child: Stack(
-          children: [
-            Swiper(
-              itemBuilder: (BuildContext context, int index) {
-                return Image.asset(
-                  Constss.authImagesPaths[index],
-                  fit: BoxFit.cover,
-                );
-              },
-              autoplay: true,
-              itemCount: Constss.authImagesPaths.length,
-            ),
-            Container(
-              color: Colors.black.withOpacity(0.7),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: size.height * 0.1),
-                  const BackWidget(),
-                  const SizedBox(height: 20),
-                  TextWidget(
-                    text: 'Change Phone Number',
-                    color: Colors.white,
-                    textSize: 30,
+ @override
+Widget build(BuildContext context) {
+  // Check if the user is null
+  if (widget.user == null) {
+    // Delay the navigation and error dialog display until the next frame
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Display the error dialog
+      await GlobalMethods.errorDialog(
+        context: context,
+        subtitle: 'You need to login first..',
+      );
+
+      // Navigate to the UserScreen after the dialog is dismissed
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const UserScreen(),
+        ),
+      );
+    });
+
+    // Return an empty container while the above actions complete
+    return Container();
+  }
+
+  Size size = Utils(context).getScreenSize;
+  return Scaffold(
+    body: LoadingManager(
+      isLoading: _isLoading,
+      child: Stack(
+        children: [
+          Swiper(
+            itemBuilder: (BuildContext context, int index) {
+              return Image.asset(
+                Constss.authImagesPaths[index],
+                fit: BoxFit.cover,
+              );
+            },
+            autoplay: true,
+            itemCount: Constss.authImagesPaths.length,
+          ),
+          Container(
+            color: Colors.black.withOpacity(0.7),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: size.height * 0.1),
+                const BackWidget(),
+                const SizedBox(height: 20),
+                TextWidget(
+                  text: 'Change Phone Number',
+                  color: Colors.white,
+                  textSize: 30,
+                ),
+                const SizedBox(height: 30),
+                TextField(
+                  controller: _phoneController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    hintText: 'Phone Number (+977)',
+                    hintStyle: TextStyle(color: Colors.white),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    errorBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
                   ),
-                  const SizedBox(height: 30),
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 15),
+                if (_verificationId.isNotEmpty)
                   TextField(
-                    controller: _phoneController,
+                    controller: _otpController,
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(
-                      hintText: 'Phone Number (+977)',
+                      hintText: 'Enter OTP',
                       hintStyle: TextStyle(color: Colors.white),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
@@ -186,39 +248,19 @@ class _changePhoneScreenState extends State<changePhoneScreen> {
                         borderSide: BorderSide(color: Colors.red),
                       ),
                     ),
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.number,
                   ),
-                  const SizedBox(height: 15),
-                  if (_verificationId.isNotEmpty)
-                    TextField(
-                      controller: _otpController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        hintText: 'Enter OTP',
-                        hintStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        errorBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                  const SizedBox(height: 15),
-                  AuthButton(
-                    buttonText: _verificationId.isEmpty ? 'Send OTP' : 'Verify OTP',
-                    fct: _verificationId.isEmpty ? _checkAndSendOTP : _verifyOTP,
-                  ),
-                ],
-              ),
+                const SizedBox(height: 15),
+                AuthButton(
+                  buttonText: _verificationId.isEmpty ? 'Send OTP' : 'Verify OTP',
+                  fct: _verificationId.isEmpty ? _checkAndSendOTP : _verifyOTP,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

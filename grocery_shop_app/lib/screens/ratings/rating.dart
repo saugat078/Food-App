@@ -20,8 +20,7 @@ class _RatingScreenState extends State<RatingScreen> {
     await FirebaseFirestore.instance
         .collection('resturants')
         .doc(widget.restaurantId)
-        .collection('ratings')
-        .add({
+        .set({
           'userId': userId,
           'rating': _rating,
           'comment': _commentController.text,
@@ -42,7 +41,7 @@ class _RatingScreenState extends State<RatingScreen> {
     final averageRating = ratings.isEmpty ? 0.0 : ratings.reduce((a, b) => a + b) / ratings.length;
 
     await FirebaseFirestore.instance
-        .collection('restaurants')
+        .collection('resturants')
         .doc(widget.restaurantId)
         .update({
           'rating': averageRating,

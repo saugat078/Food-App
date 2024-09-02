@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
-
 import '../services/utils.dart';
 
 class BackWidget extends StatelessWidget {
