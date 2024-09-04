@@ -95,7 +95,7 @@ class CategoriesScreen extends StatelessWidget {
                 catText: category['title'],
                 imgPath: category['imageUrl'],
                 passedColor: gridColors[index % gridColors.length],
-                rating: showRating ? category['rating']?.toDouble() ?? 0.0 : null,
+                rating: showRating ? category['averagerating']?.toDouble() ?? 0.0 : null,
               );
             },
           );

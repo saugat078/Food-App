@@ -61,7 +61,7 @@ class OnSaleWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextWidget(
-                            text: productModel.isPiece ? '1 Piece' : '1 KG',
+                            text: productModel.isPiece ? '1 Piece' : '1 Plate',
                             color: color,
                             textSize: size.width * 0.035,
                             isTitle: true,

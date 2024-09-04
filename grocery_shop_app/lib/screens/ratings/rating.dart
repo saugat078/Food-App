@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:grocery_shop_app/consts/firebase_const.dart';
 import 'package:grocery_shop_app/services/utils.dart';
 import 'package:grocery_shop_app/widgets/ratingWidget.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
@@ -19,38 +20,40 @@ class _RatingScreenState extends State<RatingScreen> {
   double _rating = 0.0;
   final _commentController = TextEditingController();
 
-  Future<void> _submitRating() async {
-    final userId = "user123"; 
-    await FirebaseFirestore.instance
-        .collection('resturants')
-        .doc(widget.restaurantId)
-        .set({
-          'userId': userId,
-          'rating': _rating,
-          'comment': _commentController.text,
-        });
+ Future<void> _submitRating() async {
+  final userId = uid; 
+  await FirebaseFirestore.instance
+      .collection('resturants')
+      .doc(widget.restaurantId)
+      .collection('ratings')
+      .add({
+        'userId': userId,
+        'rating': _rating,
+        'comment': _commentController.text,
+      });
 
-    await _updateAverageRating();
-    Navigator.pop(context); 
-  }
+  await _updateAverageRating();
+  Navigator.pop(context); 
+}
 
-  Future<void> _updateAverageRating() async {
-    final ratingsSnapshot = await FirebaseFirestore.instance
-        .collection('resturants')
-        .doc(widget.restaurantId)
-        .collection('ratings')
-        .get();
+Future<void> _updateAverageRating() async {
+  final ratingsSnapshot = await FirebaseFirestore.instance
+      .collection('resturants')
+      .doc(widget.restaurantId)
+      .collection('ratings')
+      .get();
 
-    final ratings = ratingsSnapshot.docs.map((doc) => doc['rating'] as double).toList();
-    final averageRating = ratings.isEmpty ? 0.0 : ratings.reduce((a, b) => a + b) / ratings.length;
+  final ratings = ratingsSnapshot.docs.map((doc) => doc['rating'] as double).toList();
+  final averageRating = ratings.isEmpty ? 0.0 : ratings.reduce((a, b) => a + b) / ratings.length;
+  print('...............................$averageRating');
 
-    await FirebaseFirestore.instance
-        .collection('resturants')
-        .doc(widget.restaurantId)
-        .update({
-          'rating': averageRating,
-        });
-  }
+  await FirebaseFirestore.instance
+      .collection('resturants')
+      .doc(widget.restaurantId)
+      .update({
+        'averagerating': averageRating,
+      });
+}
 
   @override
   Widget build(BuildContext context) {

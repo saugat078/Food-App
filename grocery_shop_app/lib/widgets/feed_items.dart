@@ -108,7 +108,7 @@ class _FeedsWidgetState extends State<FeedsWidget> {
                               const SizedBox(width: 5),
                               Flexible(
                                 child: TextWidget(
-                                  text: productModel.isPiece ? 'Piece' : 'KG',
+                                  text: productModel.isPiece ? 'Piece' : 'Plate',
                                   color: color,
                                   textSize: constraints.maxWidth * 0.06,
                                   isTitle: true,

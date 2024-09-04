@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_shop_app/fetch_screen.dart';
 import 'package:grocery_shop_app/firebase_options.dart';
 import 'package:grocery_shop_app/inner_screens/cat_screen.dart';
 import 'package:grocery_shop_app/inner_screens/feeds_screen.dart';
@@ -120,7 +119,7 @@ class _MyAppState extends State<MyApp> {
                     ForgetPasswordScreen.routeName: (ctx) =>
                         const ForgetPasswordScreen(),
                     CategoryScreen.routeName: (ctx) => const CategoryScreen(),
-                    RatingScreen.routeName: (ctx) => RatingScreen(restaurantId: '04c0ad9f-2b68-46c4-adb1-c20654e34997',),
+                    RatingScreen.routeName: (ctx) => RatingScreen(restaurantId: '8f74903d-abff-43cc-9a76-0edcfc82af6e',),
                     changePhoneScreen.routeName: (ctx) => changePhoneScreen(user:FirebaseAuth.instance.currentUser),
                   });
             }),
