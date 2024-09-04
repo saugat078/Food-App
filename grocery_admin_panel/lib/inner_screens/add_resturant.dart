@@ -91,7 +91,7 @@ class _UploadResturantFormState extends State<UploadResturantForm> {
           'title': _titleController.text,
           'imageUrl': imageUrl,
           'createdAt': Timestamp.now(),
-          'rating':ratingValue
+          'averagerating':ratingValue
         });
         _clearForm();
         Fluttertoast.showToast(

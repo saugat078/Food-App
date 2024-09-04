@@ -349,7 +349,7 @@ Future<void> _fetchCategories() async {
                                         Row(
                                           children: [
                                             TextWidget(
-                                              text: 'KG',
+                                              text: 'Bucket',
                                               color: color,
                                             ),
                                             Radio(
@@ -364,7 +364,7 @@ Future<void> _fetchCategories() async {
                                               activeColor: Colors.green,
                                             ),
                                             TextWidget(
-                                              text: 'Piece',
+                                              text: 'Plate',
                                               color: color,
                                             ),
                                             Radio(
@@ -378,6 +378,7 @@ Future<void> _fetchCategories() async {
                                               },
                                               activeColor: Colors.green,
                                             ),
+                                           
                                           ],
                                         )
                                       ],

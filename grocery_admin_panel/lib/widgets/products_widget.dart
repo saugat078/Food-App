@@ -162,7 +162,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                         )),
                     const Spacer(),
                     TextWidget(
-                      text: isPiece ? 'Piece' : '1Kg',
+                      text: isPiece ? 'Piece' : '1Plate',
                       color: color,
                       textSize: 18,
                     ),

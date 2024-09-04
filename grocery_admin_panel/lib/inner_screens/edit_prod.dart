@@ -353,7 +353,7 @@ Future<void> _fetchCategories() async {
                                               MainAxisAlignment.start,
                                           children: [
                                             TextWidget(
-                                                text: 'Kg', color: color),
+                                                text: 'Plate', color: color),
                                             Radio(
                                               value: 1,
                                               groupValue: val,
