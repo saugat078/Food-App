@@ -1,5 +1,6 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
       _formKey.currentState!.save();
       try {
-        await authInstance.createUserWithEmailAndPassword(
+          final fcmToken = await FirebaseMessaging.instance.getToken();
+          await FirebaseMessaging.instance.setAutoInitEnabled(true);
+          print("FCMToken $fcmToken");
+         await authInstance.createUserWithEmailAndPassword(
             email: _emailTextController.text.toLowerCase().trim(),
             password: _passTextController.text.trim());
         final User? user = authInstance.currentUser;
@@ -77,6 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'userWish': [],
             'userCart': [],
             'createdAt': Timestamp.now(),
+            'fcmToken': fcmToken
           },
           
         );

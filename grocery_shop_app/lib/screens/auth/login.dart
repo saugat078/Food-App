@@ -1,5 +1,7 @@
 import 'package:card_swiper/card_swiper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_shop_app/consts/constss.dart';
@@ -35,6 +37,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool _isLoading = false;
+  Future<void> storeFCMToken(String userID) async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  String? token = await messaging.getToken();
+  print("FCM Token is: $token");
+  if (token != null) {
+    await FirebaseFirestore.instance.collection('users').doc(userID).update({
+      'fcmToken': token,
+    });
+  }
+}
   void _submitFormOnLogin() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
@@ -45,9 +57,11 @@ class _LoginScreenState extends State<LoginScreen> {
       _formKey.currentState!.save();
 
       try {
+
         await authInstance.signInWithEmailAndPassword(
             email: _emailTextController.text.toLowerCase().trim(),
             password: _passTextController.text.trim());
+        await storeFCMToken(authInstance.currentUser!.uid);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const FetchScreen(),
         ));

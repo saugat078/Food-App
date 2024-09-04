@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:maps_launcher/maps_launcher.dart';
-
+import 'package:http/http.dart' as http;
 class OrderProductScreen extends StatelessWidget {
   final String orderId;
 
@@ -30,7 +32,7 @@ class OrderProductScreen extends StatelessWidget {
             return const Center(child: Text('Order not found'));
           }
 
-          Map<String, dynamic> orderData = snapshot.data!.data() as Map<String, dynamic>;
+        Map<String, dynamic> orderData = snapshot.data!.data() as Map<String, dynamic>;
           List<dynamic> products = orderData['products'];
 
           return SingleChildScrollView(
@@ -38,7 +40,7 @@ class OrderProductScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildOrderInfo(orderData),
+                _buildOrderInfo(orderData, context),
                 const SizedBox(height: 20),
                 Text('Products', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 10),
@@ -50,8 +52,8 @@ class OrderProductScreen extends StatelessWidget {
       ),
     );
   }
-  Widget _buildOrderInfo(Map<String, dynamic> orderData) {
-    Timestamp orderDate = orderData['orderDate'];
+  Widget _buildOrderInfo(Map<String, dynamic> orderData,BuildContext context) {
+    Timestamp orderDate = orderData['orderDate']; 
     String formattedDate = DateFormat('MMMM d, yyyy at h:mm:ss a').format(orderDate.toDate());
 
     return Card(
@@ -73,6 +75,26 @@ class OrderProductScreen extends StatelessWidget {
                 },
                 icon: const Icon(Icons.location_on, color: Colors.white),
                 label: const Text('Open Delivery Location', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal.shade500,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 3,
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 12),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  _sendNotification(orderData["userId"], context, orderData['orderId']);
+                },
+                icon: const Icon(Icons.location_on, color: Colors.white),
+                label: const Text('Product delivered and notified', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal.shade500,
                   foregroundColor: Colors.white,
@@ -169,3 +191,45 @@ class OrderProductScreen extends StatelessWidget {
     }
   }
 }
+
+
+  Future<void> _sendNotification(String userId, BuildContext context, String orderId) async {
+   String constructFCMPayload(String? token) {
+  
+          return jsonEncode({
+              'token': token,
+              'data': {
+              'orderId': orderId,
+      },
+        'notification': {
+        'title': 'Bhooj',
+        'body': 'Your order has been delivered successfully.',
+    },
+  });
+}
+ 
+    try {
+      // Fetch the user's FCM token from Firestore
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      String userToken = userDoc['fcmToken'];
+
+    if (userToken == null) {
+      print('Unable to send FCM message, no token exists.');
+      return;
+    }
+
+      await http.post(
+        Uri.parse('https://api.rnfirebase.io/messaging/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: constructFCMPayload(userToken),
+      );
+      print('FCM request for device sent!');
+    } catch (e) {
+      print('Error sending notification: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send notification: $e')),
+      );
+    }
+  }

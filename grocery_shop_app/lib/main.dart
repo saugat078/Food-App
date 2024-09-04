@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_shop_app/firebase_options.dart';
 import 'package:grocery_shop_app/inner_screens/cat_screen.dart';
@@ -48,11 +49,39 @@ class _MyAppState extends State<MyApp> {
         await themeChangeProvider.darkThemePrefs.getTheme();
   }
 
+  Future<void> requestNotificationPermissions() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  NotificationSettings settings = await messaging.requestPermission(
+    badge: true,
+    sound: true,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+  } else {
+    print('User declined or has not accepted permission');
+  }
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
+        // Navigator.of(context).pushNamed('/rating', arguments: message.data['orderId']);
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        // Navigator.of(context).pushNamed('/rating', arguments: message.data['orderId']);
+      }
+    });
+}
+
   @override
   void initState() {
     getCurrentAppTheme();
     super.initState();
+    requestNotificationPermissions();
   }
+
 
   final Future<FirebaseApp> _firebaseInitialization = Firebase.initializeApp();
   @override
