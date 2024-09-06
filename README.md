@@ -5,7 +5,7 @@ Welcome to the Flutter+Firebase Online Food Delivery repository! This repository
 ## Features
 
 ### Mobile App:
-- Browse through a wide range of grocery items
+- Browse through a wide range of restaurant items
 - Search functionality to quickly find products
 - Add items to cart and manage cart contents
 - Secure user authentication with Firebase Authentication
