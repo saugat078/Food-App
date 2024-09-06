@@ -22,10 +22,6 @@ class WishlistWidget extends StatelessWidget {
     final wishlistModel = Provider.of<WishlistModel>(context);
     final wishlistProvider = Provider.of<WishlistProvider>(context);
     final getCurrProduct = productProvider.findProById(wishlistModel.productId);
-    
-    if (getCurrProduct == null) {
-      return const SizedBox.shrink(); // Return an empty widget if the product is not found
-    }
 
     double usedPrice = getCurrProduct.isOnSale
         ? getCurrProduct.salePrice

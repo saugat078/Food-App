@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocery_shop_app/consts/firebase_const.dart';
+import 'package:grocery_shop_app/providers/resturant_provider.dart';
 import 'package:grocery_shop_app/screens/cart/cart_widget.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
@@ -88,9 +89,15 @@ class CartScreen extends StatelessWidget {
     final cartProvider = Provider.of<CartProvider>(ctx);
     final productProvider = Provider.of<ProductsProvider>(ctx);
     final ordersProvider = Provider.of<OrdersProvider>(ctx);
+    final restaurantProvider = Provider.of<RestaurantProvider>(ctx, listen: false);
+
     double total = 0.0;
 
     List<Map<String, dynamic>> products = [];
+     restaurantProvider.fetchRestaurantIds().then((_) {
+      // Assuming that the restaurants are loaded before proceeding
+      restaurantProvider.linkOrdersToRestaurants();
+    });
 
     cartProvider.getCartItems.forEach((key, value) {
       final getCurrProduct = productProvider.findProById(value.productId);
@@ -104,6 +111,16 @@ class CartScreen extends StatelessWidget {
         'quantity': value.quantity,
         'price': productPrice,
       });
+    });
+    
+    List<String> restaurantIds = [];
+    products.forEach((product) {
+      final productDetails = productProvider.findProById(product['productId']);
+      final matchedRestaurantId = restaurantProvider.restaurantTitleToId[productDetails.productCategoryName];
+
+      if (matchedRestaurantId != null && !restaurantIds.contains(matchedRestaurantId)) {
+        restaurantIds.add(matchedRestaurantId);
+      }
     });
 
     return SizedBox(
@@ -135,6 +152,7 @@ class CartScreen extends StatelessWidget {
                     'orderId': orderId,
                     'userId': user.uid,
                     'products': products,
+                    'resturantsId': restaurantIds,
                     'totalPrice': total,
                     'userName': user.displayName,
                     'orderDate': Timestamp.now(),

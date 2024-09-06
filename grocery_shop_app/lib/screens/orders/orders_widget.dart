@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_shop_app/screens/orders/orders_screen.dart';
 import 'package:grocery_shop_app/widgets/back_widget.dart';
 import 'package:grocery_shop_app/widgets/empty_screen.dart';
@@ -8,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../../providers/orders_provider.dart';
 import '../../services/utils.dart';
 import '../../widgets/text_widget.dart';
-import 'orders_widget.dart';
 
 class OrdersScreen extends StatefulWidget {
   static const routeName = '/OrderScreen';

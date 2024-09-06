@@ -11,10 +11,7 @@ import 'package:grocery_shop_app/widgets/heart_btn.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../../inner_screens/on_sale_screen.dart';
-import '../../models/products_model.dart';
 import '../../providers/cart_provider.dart';
-import '../../services/global_methods.dart';
 import '../../services/utils.dart';
 
 class CartWidget extends StatefulWidget {

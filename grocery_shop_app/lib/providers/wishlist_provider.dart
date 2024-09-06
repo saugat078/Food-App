@@ -28,9 +28,6 @@ class WishlistProvider with ChangeNotifier {
   Future<void> fetchWishlist() async {
     final User? user = authInstance.currentUser;
     final DocumentSnapshot userDoc = await userCollection.doc(user!.uid).get();
-    if (userDoc == null) {
-      return;
-    }
     final leng = userDoc.get('userWish').length;
     for (int i = 0; i < leng; i++) {
       _wishlistItems.putIfAbsent(

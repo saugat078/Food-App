@@ -67,16 +67,12 @@ class _UserScreenState extends State<UserScreen> {
       String _uid = user!.uid;
       final DocumentSnapshot userDoc =
           await FirebaseFirestore.instance.collection('users').doc(_uid).get();
-      if (userDoc == null) {
-        return;
-      } else {
-        _email = userDoc.get('email');
-        _name = userDoc.get('name');
-        _address = userDoc.get('shipping-address');
-        _phone=userDoc.get('phone');
-        _addressTextController.text = userDoc.get('shipping-address');
-      }
-    } catch (error) {
+      _email = userDoc.get('email');
+      _name = userDoc.get('name');
+      _address = userDoc.get('shipping-address');
+      _phone=userDoc.get('phone');
+      _addressTextController.text = userDoc.get('shipping-address');
+        } catch (error) {
       setState(() {
         _isLoading = false;
       });

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_shop_app/consts/constss.dart';
 import 'package:grocery_shop_app/consts/firebase_const.dart';
-import 'package:grocery_shop_app/fetch_screen.dart';
 import 'package:grocery_shop_app/screens/auth/login.dart';
 import 'package:grocery_shop_app/screens/auth/phone.dart';
 import 'package:grocery_shop_app/screens/loading_manager.dart';

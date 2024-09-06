@@ -82,6 +82,7 @@ class CategoriesWidget extends StatelessWidget {
                     itemCount: 5,
                     itemSize: _screenWidth < 600 ? 16 : 20,
                     itemPadding: const EdgeInsets.symmetric(horizontal: 1.0),
+                    ignoreGestures: true,
                     itemBuilder: (context, _) => const Icon(
                       Icons.star,
                       color: Colors.amber,

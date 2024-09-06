@@ -1,14 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_shop_app/consts/firebase_const.dart';
-import 'package:grocery_shop_app/inner_screens/product_details.dart';
 import 'package:grocery_shop_app/models/viewed_model.dart';
 import 'package:grocery_shop_app/services/global_methods.dart';
 import 'package:provider/provider.dart';
-import '../../models/wishlist_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/products_provider.dart';
 import '../../services/utils.dart';

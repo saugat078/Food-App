@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 class OrderModel with ChangeNotifier {
   final String orderId, userId, userName, totalPrice;
   final List<dynamic> products;
+  final List<dynamic> resturantsId;
   final Timestamp orderDate;
 
   OrderModel(
       {required this.orderId,
       required this.userId,
-      // required this.productId,
       required this.products,
+      required this.resturantsId,
       required this.userName,
       required this.totalPrice,
       // required this.imageUrl,

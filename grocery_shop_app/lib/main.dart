@@ -12,6 +12,7 @@ import 'package:grocery_shop_app/provider/dark_theme_provider.dart';
 import 'package:grocery_shop_app/providers/cart_provider.dart';
 import 'package:grocery_shop_app/providers/orders_provider.dart';
 import 'package:grocery_shop_app/providers/products_provider.dart';
+import 'package:grocery_shop_app/providers/resturant_provider.dart';
 import 'package:grocery_shop_app/providers/viewed_prod_provider.dart';
 import 'package:grocery_shop_app/providers/wishlist_provider.dart';
 import 'package:grocery_shop_app/screens/auth/changePhone.dart';
@@ -50,18 +51,18 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> requestNotificationPermissions() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  NotificationSettings settings = await messaging.requestPermission(
-    badge: true,
-    sound: true,
-  );
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    NotificationSettings settings = await messaging.requestPermission(
+      badge: true,
+      sound: true,
+    );
 
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission');
-  } else {
-    print('User declined or has not accepted permission');
-  }
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
         print('Message also contained a notification: ${message.notification}');
         // Navigator.of(context).pushNamed('/rating', arguments: message.data['orderId']);
@@ -73,7 +74,7 @@ class _MyAppState extends State<MyApp> {
         // Navigator.of(context).pushNamed('/rating', arguments: message.data['orderId']);
       }
     });
-}
+  }
 
   @override
   void initState() {
@@ -81,7 +82,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     requestNotificationPermissions();
   }
-
 
   final Future<FirebaseApp> _firebaseInitialization = Firebase.initializeApp();
   @override
@@ -127,6 +127,9 @@ class _MyAppState extends State<MyApp> {
               ChangeNotifierProvider(
                 create: (_) => OrdersProvider(),
               ),
+              ChangeNotifierProvider(
+                create: (_) => RestaurantProvider(),
+              ),
             ],
             child: Consumer<DarkThemeProvider>(
                 builder: (context, themeProvider, child) {
@@ -148,8 +151,13 @@ class _MyAppState extends State<MyApp> {
                     ForgetPasswordScreen.routeName: (ctx) =>
                         const ForgetPasswordScreen(),
                     CategoryScreen.routeName: (ctx) => const CategoryScreen(),
-                    RatingScreen.routeName: (ctx) => RatingScreen(restaurantId: '8f74903d-abff-43cc-9a76-0edcfc82af6e',),
-                    changePhoneScreen.routeName: (ctx) => changePhoneScreen(user:FirebaseAuth.instance.currentUser),
+                    RatingScreen.routeName: (ctx) {
+                      final restaurantProvider = Provider.of<RestaurantProvider>(ctx);
+                      final restaurantIds = restaurantProvider.restaurantIds;
+                      return RatingScreen(restaurantIds: restaurantIds);
+                    },
+                    changePhoneScreen.routeName: (ctx) => changePhoneScreen(
+                        user: FirebaseAuth.instance.currentUser),
                   });
             }),
           );
