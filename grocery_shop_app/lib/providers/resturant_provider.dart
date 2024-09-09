@@ -11,12 +11,10 @@ class RestaurantProvider with ChangeNotifier {
   Map<String, String> get restaurantTitleToId => _restaurantTitleToId;
   
 
-  Future<void> fetchRestaurantIds() async {
+    Future<void> fetchRestaurantIds() async {
     try {
-      // Fetching all restaurants
       QuerySnapshot restaurantSnapshot = await _firestore.collection('resturants').get();
 
-      // Populate _restaurantIds and _restaurantTitleToId
       _restaurantIds = restaurantSnapshot.docs.map((doc) => doc.id).toList();
       _restaurantTitleToId = {
         for (var doc in restaurantSnapshot.docs) doc['title']: doc.id,
@@ -61,18 +59,25 @@ class RestaurantProvider with ChangeNotifier {
       print('Error linking orders to restaurants: $error');
     }
   }
-  Future<List<String>> getRestaurantIdsFromOrders() async {
+ Future<List<String>> getRestaurantIdsFromOrders() async {
     try {
       final QuerySnapshot ordersSnapshot = await _firestore.collection('orders').get();
-      List<String> restaurantIds = [];
+      Set<String> uniqueRestaurantIds = {};
 
       for (var doc in ordersSnapshot.docs) {
         var data = doc.data() as Map<String, dynamic>;
         if (data.containsKey('resturantsId')) {
-          restaurantIds.add(data['resturantsId']);
+          if (data['resturantsId'] is String) {
+            uniqueRestaurantIds.add(data['resturantsId']);
+          } else if (data['resturantsId'] is List) {
+            uniqueRestaurantIds.addAll((data['resturantsId'] as List).map((e) => e.toString()));
+          }
         }
       }
-      return restaurantIds;
+      
+      _restaurantIds = uniqueRestaurantIds.toList();
+      notifyListeners();
+      return _restaurantIds;
     } catch (e) {
       print("Error fetching restaurant IDs: $e");
       return [];

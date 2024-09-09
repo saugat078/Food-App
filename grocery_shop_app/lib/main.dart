@@ -152,9 +152,21 @@ class _MyAppState extends State<MyApp> {
                         const ForgetPasswordScreen(),
                     CategoryScreen.routeName: (ctx) => const CategoryScreen(),
                     RatingScreen.routeName: (ctx) {
-                      final restaurantProvider = Provider.of<RestaurantProvider>(ctx);
-                      final restaurantIds = restaurantProvider.restaurantIds;
-                      return RatingScreen(restaurantIds: restaurantIds);
+                      return FutureBuilder<List<String>>(
+                        future: Provider.of<RestaurantProvider>(ctx, listen: false)
+                            .getRestaurantIdsFromOrders(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('An error occurred'));
+                          } else {
+                            final restaurantIds = snapshot.data ?? [];
+                            print('..........................$restaurantIds');
+                            return RatingScreen(restaurantIds: restaurantIds);
+                          }
+                        },
+                      );
                     },
                     changePhoneScreen.routeName: (ctx) => changePhoneScreen(
                         user: FirebaseAuth.instance.currentUser),

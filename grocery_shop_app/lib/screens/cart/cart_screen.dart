@@ -83,115 +83,112 @@ class CartScreen extends StatelessWidget {
           );
   }
 
-  Widget _checkout({required BuildContext ctx}) {
-    final Color color = Utils(ctx).color;
-    Size size = Utils(ctx).getScreenSize;
-    final cartProvider = Provider.of<CartProvider>(ctx);
-    final productProvider = Provider.of<ProductsProvider>(ctx);
-    final ordersProvider = Provider.of<OrdersProvider>(ctx);
-    final restaurantProvider = Provider.of<RestaurantProvider>(ctx, listen: false);
+Widget _checkout({required BuildContext ctx}) {
+  final Color color = Utils(ctx).color;
+  Size size = Utils(ctx).getScreenSize;
+  final cartProvider = Provider.of<CartProvider>(ctx);
+  final productProvider = Provider.of<ProductsProvider>(ctx);
+  final ordersProvider = Provider.of<OrdersProvider>(ctx);
+  final restaurantProvider = Provider.of<RestaurantProvider>(ctx, listen: false);
 
-    double total = 0.0;
+  double total = 0.0;
+  List<Map<String, dynamic>> products = [];
 
-    List<Map<String, dynamic>> products = [];
-     restaurantProvider.fetchRestaurantIds().then((_) {
-      // Assuming that the restaurants are loaded before proceeding
-      restaurantProvider.linkOrdersToRestaurants();
+  cartProvider.getCartItems.forEach((key, value) {
+    final getCurrProduct = productProvider.findProById(value.productId);
+    final productPrice = getCurrProduct.isOnSale
+        ? getCurrProduct.salePrice
+        : getCurrProduct.price;
+    total += productPrice * value.quantity;
+
+    products.add({
+      'productId': value.productId,
+      'quantity': value.quantity,
+      'price': productPrice,
     });
+  });
 
-    cartProvider.getCartItems.forEach((key, value) {
-      final getCurrProduct = productProvider.findProById(value.productId);
-      final productPrice = getCurrProduct.isOnSale
-          ? getCurrProduct.salePrice
-          : getCurrProduct.price;
-      total += productPrice * value.quantity;
-
-      products.add({
-        'productId': value.productId,
-        'quantity': value.quantity,
-        'price': productPrice,
-      });
-    });
-    
-    List<String> restaurantIds = [];
-    products.forEach((product) {
-      final productDetails = productProvider.findProById(product['productId']);
-      final matchedRestaurantId = restaurantProvider.restaurantTitleToId[productDetails.productCategoryName];
-
-      if (matchedRestaurantId != null && !restaurantIds.contains(matchedRestaurantId)) {
-        restaurantIds.add(matchedRestaurantId);
-      }
-    });
-
-    return SizedBox(
-      width: double.infinity,
-      height: size.height * 0.1,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Row(children: [
-          Material(
-            color: Colors.green,
+  return SizedBox(
+    width: double.infinity,
+    height: size.height * 0.1,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(children: [
+        Material(
+          color: Colors.green,
+          borderRadius: BorderRadius.circular(10),
+          child: InkWell(
             borderRadius: BorderRadius.circular(10),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(10),
-              onTap: () async {
-                User? user = authInstance.currentUser;
+            onTap: () async {
+              User? user = authInstance.currentUser;
 
-                if (user == null) {
-                  GlobalMethods.errorDialog(
-                      subtitle: 'No user logged in', context: ctx);
-                  return;
-                }
+              if (user == null) {
+                GlobalMethods.errorDialog(
+                    subtitle: 'No user logged in', context: ctx);
+                return;
+              }
 
-                try {
-                  final orderId = const Uuid().v4();
-                  await FirebaseFirestore.instance
-                      .collection('orders')
-                      .doc(orderId)
-                      .set({
-                    'orderId': orderId,
-                    'userId': user.uid,
-                    'products': products,
-                    'resturantsId': restaurantIds,
-                    'totalPrice': total,
-                    'userName': user.displayName,
-                    'orderDate': Timestamp.now(),
-                  });
+              try {
+                await restaurantProvider.fetchRestaurantIds();
+                
+                List<String> restaurantIds = [];
+                products.forEach((product) {
+                  final productDetails = productProvider.findProById(product['productId']);
+                  final matchedRestaurantId = restaurantProvider.restaurantTitleToId[productDetails.productCategoryName];
 
-                  await cartProvider.clearOnlineCart();
-                  cartProvider.clearLocalCart();
-                  ordersProvider.fetchOrders();
-                  await Fluttertoast.showToast(
-                    msg: "Your order has been placed",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                  );
-                } catch (error) {
-                  GlobalMethods.errorDialog(
-                      subtitle: error.toString(), context: ctx);
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextWidget(
-                  text: 'Order Now',
-                  textSize: 20,
-                  color: Colors.white,
-                ),
+                  if (matchedRestaurantId != null && !restaurantIds.contains(matchedRestaurantId)) {
+                    restaurantIds.add(matchedRestaurantId);
+                  }
+                });
+
+                final orderId = const Uuid().v4();
+                await FirebaseFirestore.instance
+                    .collection('orders')
+                    .doc(orderId)
+                    .set({
+                  'orderId': orderId,
+                  'userId': user.uid,
+                  'products': products,
+                  'resturantsId': restaurantIds,
+                  'totalPrice': total,
+                  'userName': user.displayName,
+                  'orderDate': Timestamp.now(),
+                });
+
+                await cartProvider.clearOnlineCart();
+                cartProvider.clearLocalCart();
+                ordersProvider.fetchOrders();
+                await Fluttertoast.showToast(
+                  msg: "Your order has been placed",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                );
+              } catch (error) {
+                GlobalMethods.errorDialog(
+                    subtitle: error.toString(), context: ctx);
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextWidget(
+                text: 'Order Now',
+                textSize: 20,
+                color: Colors.white,
               ),
             ),
           ),
-          const Spacer(),
-          FittedBox(
-            child: TextWidget(
-              text: 'Total: \Rs.${total.toStringAsFixed(2)}',
-              color: color,
-              textSize: 18,
-              isTitle: true,
-            ),
+        ),
+        const Spacer(),
+        FittedBox(
+          child: TextWidget(
+            text: 'Total: \Rs.${total.toStringAsFixed(2)}',
+            color: color,
+            textSize: 18,
+            isTitle: true,
           ),
-        ]),
-      ),
-    );
-  }
+        ),
+      ]),
+    ),
+  );
+}
 }
