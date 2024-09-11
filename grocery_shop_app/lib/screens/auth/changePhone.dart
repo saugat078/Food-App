@@ -2,6 +2,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:grocery_shop_app/consts/constss.dart';
 import 'package:grocery_shop_app/fetch_screen.dart';
 import 'package:grocery_shop_app/screens/loading_manager.dart';
@@ -21,7 +22,7 @@ class changePhoneScreen extends StatefulWidget {
 }
 
 class _changePhoneScreenState extends State<changePhoneScreen> {
-  final _phoneController = TextEditingController();
+  final _phoneController = TextEditingController(text: '+977 ');
   final _otpController = TextEditingController();
   String _verificationId = '';
   bool _isLoading = false;
@@ -120,6 +121,7 @@ class _changePhoneScreenState extends State<changePhoneScreen> {
       );
 
       await _linkPhoneCredential(credential);
+      await _updatePhoneNumber();
     } on FirebaseAuthException catch (e) {
       GlobalMethods.errorDialog(subtitle: e.message ?? 'An error occurred', context: context);
     } finally {
@@ -154,78 +156,47 @@ class _changePhoneScreenState extends State<changePhoneScreen> {
     }
   }
 
- @override
-Widget build(BuildContext context) {
-  if (widget.user == null) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await GlobalMethods.errorDialog(
-        context: context,
-        subtitle: 'You need to login first..',
-      );
-      Navigator.pop(context);
-    });
-    return Container();
-  }
-
-  Size size = Utils(context).getScreenSize;
-  return Scaffold(
-    body: LoadingManager(
-      isLoading: _isLoading,
-      child: Stack(
-        children: [
-          Swiper(
-            itemBuilder: (BuildContext context, int index) {
-              return Image.asset(
-                Constss.authImagesPaths[index],
-                fit: BoxFit.cover,
-              );
-            },
-            autoplay: true,
-            itemCount: Constss.authImagesPaths.length,
-          ),
-          Container(
-            color: Colors.black.withOpacity(0.7),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: size.height * 0.1),
-                const BackWidget(),
-                const SizedBox(height: 20),
-                TextWidget(
-                  text: 'Change Phone Number',
-                  color: Colors.white,
-                  textSize: 30,
-                ),
-                const SizedBox(height: 30),
-                TextField(
-                  controller: _phoneController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    hintText: 'Phone Number (+977)',
-                    hintStyle: TextStyle(color: Colors.white),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    errorBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.red),
-                    ),
+  @override
+  Widget build(BuildContext context) {
+    Size size = Utils(context).getScreenSize;
+    return Scaffold(
+      body: LoadingManager(
+        isLoading: _isLoading,
+        child: Stack(
+          children: [
+            Swiper(
+              itemBuilder: (BuildContext context, int index) {
+                return Image.asset(
+                  Constss.authImagesPaths[index],
+                  fit: BoxFit.cover,
+                );
+              },
+              autoplay: true,
+              itemCount: Constss.authImagesPaths.length,
+            ),
+            Container(
+              color: Colors.black.withOpacity(0.7),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: size.height * 0.1),
+                  const BackWidget(),
+                  const SizedBox(height: 20),
+                  TextWidget(
+                    text: 'Change Phone Number',
+                    color: Colors.white,
+                    textSize: 30,
                   ),
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 15),
-                if (_verificationId.isNotEmpty)
+                  const SizedBox(height: 30),
                   TextField(
-                    controller: _otpController,
+                    controller: _phoneController,
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(
-                      hintText: 'Enter OTP',
-                      hintStyle: TextStyle(color: Colors.white),
+                      hintText: '+977 Phone Number',
+                      hintStyle: TextStyle(color: Colors.white54),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
@@ -236,19 +207,57 @@ Widget build(BuildContext context) {
                         borderSide: BorderSide(color: Colors.red),
                       ),
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      _PhonePrefixFormatter(),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9+\s]')),
+                      LengthLimitingTextInputFormatter(15),
+                    ],
                   ),
-                const SizedBox(height: 15),
-                AuthButton(
-                  buttonText: _verificationId.isEmpty ? 'Send OTP' : 'Verify OTP',
-                  fct: _verificationId.isEmpty ? _checkAndSendOTP : _verifyOTP,
-                ),
-              ],
+                  const SizedBox(height: 15),
+                  if (_verificationId.isNotEmpty)
+                    TextField(
+                      controller: _otpController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        hintText: 'Enter OTP',
+                        hintStyle: TextStyle(color: Colors.white),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        errorBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                        ),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  const SizedBox(height: 15),
+                  AuthButton(
+                    buttonText: _verificationId.isEmpty ? 'Send OTP' : 'Verify OTP',
+                    fct: _verificationId.isEmpty ? _sendOTP : _verifyOTP,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
+class _PhonePrefixFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.length < 5) {
+      return TextEditingValue(
+        text: '+977 ',
+        selection: TextSelection.collapsed(offset: 5),
+      );
+    }
+    return newValue;
+  }
 }

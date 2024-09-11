@@ -84,6 +84,7 @@ class _PhoneVerificationScreenState extends State<PhoneVerificationScreen> {
       );
 
       await _linkPhoneCredential(credential);
+      await _updatePhoneNumber();
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -102,7 +103,6 @@ class _PhoneVerificationScreenState extends State<PhoneVerificationScreen> {
   Future<void> _linkPhoneCredential(PhoneAuthCredential credential) async {
     try {
       await widget.user.linkWithCredential(credential);
-      await _updatePhoneNumber();
     } on FirebaseAuthException catch (e) {
       GlobalMethods.errorDialog(subtitle: e.message ?? 'An error occurred', context: context);
     }

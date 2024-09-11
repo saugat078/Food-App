@@ -69,8 +69,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         final User? user = authInstance.currentUser;
         final _uid = user!.uid;
         print('User ID: $_uid');
-        user.updateDisplayName(_fullNameController.text);
-        user.reload();
+        await user.updateDisplayName(_fullNameController.text);
+        await user.reload();
         await FirebaseFirestore.instance.collection('users').doc(_uid).set(
           {
             'id': _uid,
@@ -80,14 +80,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'userWish': [],
             'userCart': [],
             'createdAt': Timestamp.now(),
-            'fcmToken': fcmToken
+            'fcmToken': fcmToken,
+            'phone':''
           },
           
         );
         print('Firestore document created successfully');
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => PhoneVerificationScreen(user:FirebaseAuth.instance.currentUser!),
+            builder: (context) => PhoneVerificationScreen(user:user),
           ),
         );
         print('Succefully registered');
