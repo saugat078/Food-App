@@ -4,7 +4,9 @@ import 'orderProductScreen.dart';
 import 'package:intl/intl.dart';
 
 class OrdersList extends StatelessWidget {
-  const OrdersList({Key? key}) : super(key: key);
+  final String riderId;
+
+  const OrdersList({Key? key, required this.riderId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +15,12 @@ class OrdersList extends StatelessWidget {
         title: const Text('Orders'),
         centerTitle: true,
         backgroundColor: Colors.teal,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: UserProfileWidget(userId: riderId),
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -61,7 +69,10 @@ class OrdersList extends StatelessWidget {
                     child: OrderCard(orderData: orderDetails),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => OrderProductScreen(orderId: orderDetails['orderId'])));
+                          builder: (context) => OrderProductScreen(
+                            orderId: orderDetails['orderId'],
+                            riderId: riderId,
+                          )));
                     },
                   );
                 },
@@ -135,6 +146,83 @@ class OrderCard extends StatelessWidget {
                 style: const TextStyle(color: Colors.grey, fontSize: 14)),
             const SizedBox(height: 4),
             const Icon(Icons.chevron_right, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class UserProfileWidget extends StatelessWidget {
+  final String userId;
+
+  const UserProfileWidget({Key? key, required this.userId}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<DocumentSnapshot>(
+      future: FirebaseFirestore.instance.collection('riders').doc(userId).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+
+        if (snapshot.hasError) {
+          return const Icon(Icons.error);
+        }
+
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const Icon(Icons.person);
+        }
+
+        Map<String, dynamic> riderData = snapshot.data!.data() as Map<String, dynamic>;
+        String name = riderData['name'] ?? 'N/A';
+        String initials = name.isNotEmpty ? name.substring(0, 1).toUpperCase() : '?';
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UserProfileScreen(riderData: riderData),
+              ),
+            );
+          },
+          child: CircleAvatar(
+            backgroundColor: Colors.teal,
+            child: Text(
+              initials,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class UserProfileScreen extends StatelessWidget {
+  final Map<String, dynamic> riderData;
+
+  const UserProfileScreen({Key? key, required this.riderData}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Rider Profile'),
+        backgroundColor: Colors.teal,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Name: ${riderData['name'] ?? 'N/A'}', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text('Email: ${riderData['email'] ?? 'N/A'}', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Text('Phone: ${riderData['phone'] ?? 'N/A'}', style: Theme.of(context).textTheme.titleMedium),
           ],
         ),
       ),

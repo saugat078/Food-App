@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_rider_app/consts/firebase_const.dart';
 import 'package:grocery_rider_app/provider/dark_theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:grocery_rider_app/Auth/login.dart';
@@ -55,7 +56,7 @@ class _MyAppState extends State<MyApp> {
           routes: {
             '/LoginScreen': (context) => LoginScreen(),
             '/RegisterScreen': (context) => RegisterScreen(),
-            '/orders': (context) => OrdersList(),
+            '/orders': (context) => OrdersList(riderId: uid),
           },
         );
       },

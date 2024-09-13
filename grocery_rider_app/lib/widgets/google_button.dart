@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grocery_rider_app/auth/phone.dart';
+import 'package:grocery_rider_app/consts/firebase_const.dart';
 import 'package:grocery_rider_app/pages/order_list.dart';
 import 'package:grocery_rider_app/services/global_methods.dart';
 import 'package:grocery_rider_app/widgets/text_widget.dart';
@@ -49,7 +50,7 @@ class GoogleButton extends StatelessWidget {
           // User already exists, navigate to fetch screen
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => const OrdersList(),
+              builder: (context) => OrdersList(riderId: uid),
             ),
           );
         }

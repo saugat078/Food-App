@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grocery_rider_app/consts/constss.dart';
+import 'package:grocery_rider_app/consts/firebase_const.dart';
 import 'package:grocery_rider_app/loading_manager.dart';
 import 'package:grocery_rider_app/pages/order_list.dart';
 import 'package:grocery_rider_app/services/global_methods.dart';
@@ -89,7 +90,7 @@ class _PhoneVerificationScreenState extends State<PhoneVerificationScreen> {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const OrdersList(), 
+          builder: (context) => OrdersList(riderId: uid), 
         ),
       );
     } on FirebaseAuthException catch (e) {

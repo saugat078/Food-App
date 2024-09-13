@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
             password: _passTextController.text.trim());
         // await storeFCMToken(authInstance.currentUser!.uid);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const OrdersList(),
+          builder: (context) => OrdersList(riderId: uid),
         ));
         print('Succefully logged in');
       } on FirebaseException catch (error) {
@@ -280,7 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     fct: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => const OrdersList(),
+                          builder: (context) => OrdersList(riderId: uid),
                         ),
                       );
                     },

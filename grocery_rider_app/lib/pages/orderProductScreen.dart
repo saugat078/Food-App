@@ -1,16 +1,19 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_rider_app/userProfile/user.dart';
 import 'package:intl/intl.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:googleapis/servicecontrol/v1.dart' as servicecontrol;
 import 'package:googleapis_auth/auth_io.dart' as auth;
 
+
 class OrderProductScreen extends StatelessWidget {
   final String orderId;
+  final String riderId; 
 
-  const OrderProductScreen({Key? key, required this.orderId}) : super(key: key);
+  const OrderProductScreen({Key? key, required this.orderId, required this.riderId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +21,12 @@ class OrderProductScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Order #${orderId.substring(0, 8)}'),
         backgroundColor: Colors.teal,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: UserProfileWidget(userId: riderId),
+          ),
+        ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance.collection('orders').doc(orderId).get(),
@@ -34,7 +43,7 @@ class OrderProductScreen extends StatelessWidget {
             return const Center(child: Text('Order not found'));
           }
 
-        Map<String, dynamic> orderData = snapshot.data!.data() as Map<String, dynamic>;
+          Map<String, dynamic> orderData = snapshot.data!.data() as Map<String, dynamic>;
           List<dynamic> products = orderData['products'];
           List<dynamic> resturantsId = orderData['resturantsId'];
 
