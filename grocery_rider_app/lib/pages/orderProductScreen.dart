@@ -156,7 +156,7 @@ class OrderProductScreen extends StatelessWidget {
                     _buildPriceWidget(productData),
                     const SizedBox(height: 4),
                     Text('Category: ${productData['productCategoryName']}'),
-                    Text(productData['isPiece'] ? 'Sold by: Piece' : 'Sold by: 1kg'),
+                    Text(productData['isPiece'] ? 'Sold by: Piece' : 'Sold by: Plate'),
                     const SizedBox(height: 4),
                     Text('Quantity: ${product['quantity']}'),
                     Text('Subtotal: \Rs. ${(product['price'] * product['quantity']).toStringAsFixed(2)}'),
@@ -247,11 +247,6 @@ return credentials.accessToken.data;
     try {
       DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
       String userToken = userDoc['fcmToken'];
-
-    if (userToken == null) {
-      print('Unable to send FCM message, no token exists.');
-      return;
-    }
 
       var response = await http.post(
         Uri.parse('https://fcm.googleapis.com/v1/projects/grocery-app-29daf/messages:send'),
