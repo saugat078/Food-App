@@ -71,8 +71,9 @@ class _RatingScreenState extends State<RatingScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Cancel Rating'),
-          content: Text('Are you sure you want to cancel the rating process?'),
+          backgroundColor:Theme.of(context).scaffoldBackgroundColor,
+          title: TextWidget(text:'Cancel Rating',color:Utils(context).color,textSize:20),
+          content: TextWidget(text:'Are you sure you want to cancel the rating process?',color:Utils(context).color,textSize:14),
           actions: <Widget>[
             TextButton(
               child: Text('No'),
@@ -100,10 +101,12 @@ class _RatingScreenState extends State<RatingScreen> {
       isLoading: _isLoading,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Rate Restaurants'),
+          title: TextWidget(text:'Rate Restaurants',color:color,textSize: 24,),
+          backgroundColor:Theme.of(context).scaffoldBackgroundColor,
           actions: [
             IconButton(
               icon: Icon(Icons.cancel),
+              color: color,
               onPressed: _showCancelConfirmationDialog,
             ),
           ],

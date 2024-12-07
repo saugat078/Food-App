@@ -14,6 +14,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/on_sale_widget.dart';
 
 class HomeScreen extends StatefulWidget {
+    static const routeName = "/HomeScreen";
+
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -22,7 +24,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<String> _offerImages = [];
-
   @override
   void initState() {
     super.initState();
@@ -41,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
       print('Error fetching images: $e');
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final Utils utils = Utils(context);

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_shop_app/fetch_screen.dart';
 import 'package:grocery_shop_app/firebase_options.dart';
 import 'package:grocery_shop_app/inner_screens/cat_screen.dart';
 import 'package:grocery_shop_app/inner_screens/feeds_screen.dart';
@@ -19,6 +20,7 @@ import 'package:grocery_shop_app/screens/auth/changePhone.dart';
 import 'package:grocery_shop_app/screens/auth/forget_pass.dart';
 import 'package:grocery_shop_app/screens/auth/login.dart';
 import 'package:grocery_shop_app/screens/auth/register.dart';
+import 'package:grocery_shop_app/screens/home_screen.dart';
 import 'package:grocery_shop_app/screens/orders/orders_widget.dart';
 import 'package:grocery_shop_app/screens/ratings/rating.dart';
 import 'package:grocery_shop_app/screens/viewed_recently/viewed_recently.dart';
@@ -139,6 +141,8 @@ class _MyAppState extends State<MyApp> {
                   theme: Styles.themeData(themeProvider.getDarkTheme, context),
                   home: SplashScreen(),
                   routes: {
+                    HomeScreen.routeName:(ctx)=> const HomeScreen(),
+                    FetchScreen.routeName:(ctx)=> const FetchScreen(),
                     OnSaleScreen.routeName: (ctx) => const OnSaleScreen(),
                     FeedsScreen.routeName: (ctx) => const FeedsScreen(),
                     ProductDetails.routeName: (ctx) => const ProductDetails(),

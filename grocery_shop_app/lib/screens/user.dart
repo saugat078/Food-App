@@ -201,7 +201,7 @@ class _UserScreenState extends State<UserScreen> {
                 ),
                 _listTiles(
                   title: 'Rating',
-                  icon: IconlyLight.delete,
+                  icon: IconlyLight.star,
                   onPressed: () {
                     GlobalMethods.navigateTo(
                         ctx: context,

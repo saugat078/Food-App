@@ -2,7 +2,6 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_shop_app/inner_screens/product_details.dart';
 import 'package:grocery_shop_app/models/order_model.dart';
-import 'package:grocery_shop_app/services/global_methods.dart';
 import 'package:provider/provider.dart';
 import '../../providers/products_provider.dart';
 import '../../services/utils.dart';
@@ -17,7 +16,6 @@ class OrderWidget extends StatefulWidget {
 
 class _OrderWidgetState extends State<OrderWidget> {
   late String orderDateToShow;
-  bool isDelivered = false;
 
   @override
   void didChangeDependencies() {
@@ -30,6 +28,7 @@ class _OrderWidgetState extends State<OrderWidget> {
   @override
   Widget build(BuildContext context) {
     final ordersModel = Provider.of<OrderModel>(context);
+    var status = ordersModel.status.toString();
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
     final productProvider = Provider.of<ProductsProvider>(context);
@@ -46,19 +45,14 @@ class _OrderWidgetState extends State<OrderWidget> {
             ),
             Flexible(
               child: Material(
-                color: isDelivered ? Colors.green : Colors.orange,
+                color: status == 'Delivered' ? Colors.green : Colors.orange,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      isDelivered = !isDelivered;
-                    });
-                  },
                   borderRadius: BorderRadius.circular(10),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     child: TextWidget(
-                      text: isDelivered ? 'Delivered' : 'Ordered',
+                      text: status,
                       color: Colors.white,
                       textSize: 16,
                     ),
@@ -87,10 +81,12 @@ class _OrderWidgetState extends State<OrderWidget> {
                 color: color,
                 textSize: 18,
               ),
-              subtitle: Text('Price: \Rs.${product['price'].toStringAsFixed(2)}'),
+              subtitle: TextWidget(text:'Price: \Rs.${product['price'].toStringAsFixed(2)}',textSize: 12,color:color),
               onTap: () {
-                GlobalMethods.navigateTo(
-                    ctx: context, routeName: ProductDetails.routeName);
+                 Navigator.of(context).pushNamed(
+            ProductDetails.routeName,
+            arguments: getCurrProduct.id,
+          );
               },
             );
           },

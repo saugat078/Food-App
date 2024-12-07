@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'providers/products_provider.dart';
 
 class FetchScreen extends StatefulWidget {
+  static const routeName='/fetchScreen';
   const FetchScreen({Key? key}) : super(key: key);
 
   @override

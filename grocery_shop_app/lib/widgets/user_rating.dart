@@ -51,7 +51,8 @@ class _RestaurantRatingWidgetState extends State<RestaurantRatingWidget> {
         .get();
 
     final ratings = ratingsSnapshot.docs.map((doc) => doc['rating'] as double).toList();
-    final averageRating = ratings.isEmpty ? 0.0 : ratings.reduce((a, b) => a + b) / ratings.length;
+    final averageRating =
+        ratings.isEmpty ? 0.0 : ratings.reduce((a, b) => a + b) / ratings.length;
 
     await FirebaseFirestore.instance
         .collection('resturants')
@@ -63,9 +64,12 @@ class _RestaurantRatingWidgetState extends State<RestaurantRatingWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final color = Utils(context).color;
 
     return Card(
+      color: Theme.of(context).cardColor.withOpacity(0.9),
+      elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -102,15 +106,21 @@ class _RestaurantRatingWidgetState extends State<RestaurantRatingWidget> {
             TextField(
               controller: _commentController,
               decoration: InputDecoration(
+                filled: true,
+                fillColor: backgroundColor.withOpacity(0.5),
                 border: OutlineInputBorder(),
                 hintText: 'Enter your comment here',
-                fillColor: color,
               ),
               maxLines: 4,
+              style: TextStyle(color: color),
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _submitRating,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: color,
+                foregroundColor: backgroundColor, 
+              ),
               child: Text('Submit Rating'),
             ),
           ],

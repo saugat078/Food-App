@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocery_shop_app/consts/firebase_const.dart';
+import 'package:grocery_shop_app/fetch_screen.dart';
 import 'package:grocery_shop_app/providers/resturant_provider.dart';
 import 'package:grocery_shop_app/screens/cart/cart_widget.dart';
 import 'package:grocery_shop_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-
 import '../../providers/cart_provider.dart';
 import '../../providers/orders_provider.dart';
 import '../../providers/products_provider.dart';
@@ -153,6 +153,7 @@ Widget _checkout({required BuildContext ctx}) {
                   'totalPrice': total,
                   'userName': user.displayName,
                   'orderDate': Timestamp.now(),
+                  'status':'Ordered'
                 });
 
                 await cartProvider.clearOnlineCart();
@@ -163,6 +164,7 @@ Widget _checkout({required BuildContext ctx}) {
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.CENTER,
                 );
+                Navigator.of(ctx).pushReplacementNamed(FetchScreen.routeName);
               } catch (error) {
                 GlobalMethods.errorDialog(
                     subtitle: error.toString(), context: ctx);
