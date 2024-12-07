@@ -48,7 +48,8 @@ class OrdersList extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('orders')
-            .orderBy('orderDate', descending: true)
+            .where('status', isEqualTo: 'Ordered')
+            // .orderBy('orderDate', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
