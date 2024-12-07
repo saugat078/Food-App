@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_rider_app/Auth/login.dart';
 import 'orderProductScreen.dart';
 import 'package:intl/intl.dart';
 
@@ -16,9 +18,30 @@ class OrdersList extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.teal,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: UserProfileWidget(userId: riderId),
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () async {
+              // Fetch rider data first
+              DocumentSnapshot riderSnapshot = await FirebaseFirestore.instance
+                  .collection('riders')
+                  .doc(riderId)
+                  .get();
+
+              if (riderSnapshot.exists) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserProfileScreen(
+                      riderData: riderSnapshot.data() as Map<String, dynamic>,
+                    ),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Rider profile not found')),
+                );
+              }
+            },
           ),
         ],
       ),
@@ -41,7 +64,8 @@ class OrdersList extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.shopping_bag_outlined, size: 64, color: Colors.grey),
+                  Icon(Icons.shopping_bag_outlined,
+                      size: 64, color: Colors.grey),
                   SizedBox(height: 16),
                   Text('No orders found', style: TextStyle(fontSize: 18)),
                 ],
@@ -70,9 +94,9 @@ class OrdersList extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => OrderProductScreen(
-                            orderId: orderDetails['orderId'],
-                            riderId: riderId,
-                          )));
+                                orderId: orderDetails['orderId'],
+                                riderId: riderId,
+                              )));
                     },
                   );
                 },
@@ -84,7 +108,8 @@ class OrdersList extends StatelessWidget {
     );
   }
 
-  Future<Map<String, dynamic>> fetchOrderDetails(QueryDocumentSnapshot order) async {
+  Future<Map<String, dynamic>> fetchOrderDetails(
+      QueryDocumentSnapshot order) async {
     var orderData = order.data() as Map<String, dynamic>;
 
     var userSnapshot = await FirebaseFirestore.instance
@@ -132,10 +157,11 @@ class OrderCard extends StatelessWidget {
           children: [
             const SizedBox(height: 8),
             Text('Total: \Rs. ${orderData['totalPrice'].toStringAsFixed(2)}',
-                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.teal)),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.teal)),
             const SizedBox(height: 4),
-            Text('Ordered by: ${orderData['userName']}', 
-                 style: const TextStyle(color: Colors.grey)),
+            Text('Ordered by: ${orderData['userName']}',
+                style: const TextStyle(color: Colors.grey)),
           ],
         ),
         trailing: Column(
@@ -153,77 +179,136 @@ class OrderCard extends StatelessWidget {
   }
 }
 
-class UserProfileWidget extends StatelessWidget {
-  final String userId;
-
-  const UserProfileWidget({Key? key, required this.userId}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('riders').doc(userId).get(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }
-
-        if (snapshot.hasError) {
-          return const Icon(Icons.error);
-        }
-
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Icon(Icons.person);
-        }
-
-        Map<String, dynamic> riderData = snapshot.data!.data() as Map<String, dynamic>;
-        String name = riderData['name'] ?? 'N/A';
-        String initials = name.isNotEmpty ? name.substring(0, 1).toUpperCase() : '?';
-
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => UserProfileScreen(riderData: riderData),
-              ),
-            );
-          },
-          child: CircleAvatar(
-            backgroundColor: Colors.teal,
-            child: Text(
-              initials,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
 class UserProfileScreen extends StatelessWidget {
   final Map<String, dynamic> riderData;
 
-  const UserProfileScreen({Key? key, required this.riderData}) : super(key: key);
+  const UserProfileScreen({Key? key, required this.riderData})
+      : super(key: key);
+
+  // Logout method
+  Future<void> _logout(BuildContext context) async {
+    try {
+      // Sign out from Firebase Authentication
+      await FirebaseAuth.instance.signOut();
+
+      // Navigate to login screen and remove all previous routes
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      // Show error if logout fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Logout failed: ${e.toString()}')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Rider Profile'),
         backgroundColor: Colors.teal,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Name: ${riderData['name'] ?? 'N/A'}', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text('Email: ${riderData['email'] ?? 'N/A'}', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Text('Phone: ${riderData['phone'] ?? 'N/A'}', style: Theme.of(context).textTheme.titleMedium),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Profile Header
+              Center(
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.teal.shade100,
+                  child: Text(
+                    (riderData['name'] ?? 'N/A').substring(0, 1).toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 48,
+                      color: Colors.teal.shade800,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Name
+              Text(
+                riderData['name'] ?? 'N/A',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal.shade900,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Profile Information Cards
+              _buildInfoCard(
+                context,
+                icon: Icons.email,
+                title: 'Email',
+                subtitle: riderData['email'] ?? 'N/A',
+              ),
+              const SizedBox(height: 8),
+              _buildInfoCard(
+                context,
+                icon: Icons.phone,
+                title: 'Phone Number',
+                subtitle: riderData['phone'] ?? 'N/A',
+              ),
+              const SizedBox(height: 16),
+
+              // Logout Button
+              ElevatedButton.icon(
+                onPressed: () => _logout(context),
+                icon: const Icon(Icons.logout),
+                label: const Text('Logout'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.red.shade600,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Helper method to create info cards
+  Widget _buildInfoCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.teal),
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: Colors.teal.shade700,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
       ),
     );
